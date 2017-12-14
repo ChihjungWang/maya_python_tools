@@ -1,0 +1,90 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'C:/Users/chihjung/Documents/maya/2017/scripts/ui/prmanToolsRibEdit.ui'
+#
+# Created: Thu Nov 30 09:25:29 2017
+#      by: pyside2-uic  running on PySide2 2.0.0~alpha0
+#
+# WARNING! All changes made in this file will be lost!
+
+from PySide2 import QtCore, QtGui, QtWidgets
+
+class Ui_main_widget(object):
+    def setupUi(self, main_widget):
+        main_widget.setObjectName("main_widget")
+        main_widget.resize(800, 599)
+        self.verticalLayout = QtWidgets.QVBoxLayout(main_widget)
+        self.verticalLayout.setSpacing(4)
+        self.verticalLayout.setContentsMargins(4, 4, 4, 4)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.substitute_label = QtWidgets.QLabel(main_widget)
+        self.substitute_label.setObjectName("substitute_label")
+        self.verticalLayout.addWidget(self.substitute_label)
+        self.gridLayout = QtWidgets.QGridLayout()
+        self.gridLayout.setContentsMargins(2, 2, 2, 2)
+        self.gridLayout.setSpacing(4)
+        self.gridLayout.setObjectName("gridLayout")
+        self.substitute_new_label = QtWidgets.QLabel(main_widget)
+        self.substitute_new_label.setObjectName("substitute_new_label")
+        self.gridLayout.addWidget(self.substitute_new_label, 1, 0, 1, 1)
+        self.oldRoot_LE = QtWidgets.QLineEdit(main_widget)
+        self.oldRoot_LE.setObjectName("oldRoot_LE")
+        self.gridLayout.addWidget(self.oldRoot_LE, 0, 1, 1, 1)
+        self.newRoot_LE = QtWidgets.QLineEdit(main_widget)
+        self.newRoot_LE.setObjectName("newRoot_LE")
+        self.gridLayout.addWidget(self.newRoot_LE, 1, 1, 1, 1)
+        self.oldRootBro_PB = QtWidgets.QPushButton(main_widget)
+        self.oldRootBro_PB.setMaximumSize(QtCore.QSize(20, 16777215))
+        self.oldRootBro_PB.setObjectName("oldRootBro_PB")
+        self.gridLayout.addWidget(self.oldRootBro_PB, 0, 2, 1, 1)
+        self.newRootBro_PB = QtWidgets.QPushButton(main_widget)
+        self.newRootBro_PB.setMaximumSize(QtCore.QSize(20, 16777215))
+        self.newRootBro_PB.setObjectName("newRootBro_PB")
+        self.gridLayout.addWidget(self.newRootBro_PB, 1, 2, 1, 1)
+        self.substitute_old_label = QtWidgets.QLabel(main_widget)
+        self.substitute_old_label.setObjectName("substitute_old_label")
+        self.gridLayout.addWidget(self.substitute_old_label, 0, 0, 1, 1)
+        self.oldRootOpen_PB = QtWidgets.QPushButton(main_widget)
+        self.oldRootOpen_PB.setObjectName("oldRootOpen_PB")
+        self.gridLayout.addWidget(self.oldRootOpen_PB, 0, 3, 1, 1)
+        self.newRootOpen_PB = QtWidgets.QPushButton(main_widget)
+        self.newRootOpen_PB.setObjectName("newRootOpen_PB")
+        self.gridLayout.addWidget(self.newRootOpen_PB, 1, 3, 1, 1)
+        self.verticalLayout.addLayout(self.gridLayout)
+        self.PB_layout = QtWidgets.QGridLayout()
+        self.PB_layout.setContentsMargins(2, 2, 2, 2)
+        self.PB_layout.setSpacing(4)
+        self.PB_layout.setObjectName("PB_layout")
+        self.substituteRib_PB = QtWidgets.QPushButton(main_widget)
+        self.substituteRib_PB.setObjectName("substituteRib_PB")
+        self.PB_layout.addWidget(self.substituteRib_PB, 0, 0, 1, 1)
+        self.substituteGpuCache_PB = QtWidgets.QPushButton(main_widget)
+        self.substituteGpuCache_PB.setObjectName("substituteGpuCache_PB")
+        self.PB_layout.addWidget(self.substituteGpuCache_PB, 0, 1, 1, 1)
+        self.ribShapeRename_PB = QtWidgets.QPushButton(main_widget)
+        self.ribShapeRename_PB.setObjectName("ribShapeRename_PB")
+        self.PB_layout.addWidget(self.ribShapeRename_PB, 1, 0, 1, 1)
+        self.ribFrameFix_PB = QtWidgets.QPushButton(main_widget)
+        self.ribFrameFix_PB.setObjectName("ribFrameFix_PB")
+        self.PB_layout.addWidget(self.ribFrameFix_PB, 1, 1, 1, 1)
+        self.verticalLayout.addLayout(self.PB_layout)
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem)
+
+        self.retranslateUi(main_widget)
+        QtCore.QMetaObject.connectSlotsByName(main_widget)
+
+    def retranslateUi(self, main_widget):
+        main_widget.setWindowTitle(QtWidgets.QApplication.translate("main_widget", "Form", None, -1))
+        self.substitute_label.setText(QtWidgets.QApplication.translate("main_widget", "substitute path root", None, -1))
+        self.substitute_new_label.setText(QtWidgets.QApplication.translate("main_widget", "new root", None, -1))
+        self.oldRootBro_PB.setText(QtWidgets.QApplication.translate("main_widget", "...", None, -1))
+        self.newRootBro_PB.setText(QtWidgets.QApplication.translate("main_widget", "...", None, -1))
+        self.substitute_old_label.setText(QtWidgets.QApplication.translate("main_widget", "old root", None, -1))
+        self.oldRootOpen_PB.setText(QtWidgets.QApplication.translate("main_widget", "open", None, -1))
+        self.newRootOpen_PB.setText(QtWidgets.QApplication.translate("main_widget", "open", None, -1))
+        self.substituteRib_PB.setText(QtWidgets.QApplication.translate("main_widget", "substitute Rib", None, -1))
+        self.substituteGpuCache_PB.setText(QtWidgets.QApplication.translate("main_widget", "substitute gpuCache", None, -1))
+        self.ribShapeRename_PB.setText(QtWidgets.QApplication.translate("main_widget", "ribShape rename", None, -1))
+        self.ribFrameFix_PB.setText(QtWidgets.QApplication.translate("main_widget", "rib frame fix", None, -1))
+
