@@ -51,9 +51,41 @@ class Black_UI(QtWidgets.QDialog):
         main_tab_Widget.addTab(self.prmanToolsTextureEdit_wid, "textureEdit")
         main_tab_Widget.addTab(self.prmanToolsDelUnuse_wid, "deleteUnuse")
         self.layout().addWidget(main_tab_Widget)
+        username=getpass.getuser()
+        self.python_temp='C:/Users/'+username+'/Documents/maya/python_tools_temp'
+        self.python_temp_csv=self.python_temp+'/prmanTools.csv'
+        ribEdit_save_UI_list=[self.prmanToolsRibEdit_wid.oldRoot_LE,self.prmanToolsRibEdit_wid.newRoot_LE]
+        self.save_UI_list=ribEdit_save_UI_list
+        self.setFromCsv()
 
     def closeEvent(self, event):
-        self.prmanToolsRibEdit_wid.writeCsv()
+        self.writeCsv()
+
+    def writeCsv(self):
+        if os.path.exists(self.python_temp) == False:
+            os.mkdir(self.python_temp)
+        data=[['var_name','value']]
+        for obj in self.save_UI_list:
+            obj_info=[obj.objectName(),self.getValue(obj)]
+            data.append(obj_info)
+        file = open(self.python_temp_csv,'w')
+        w = csv.writer(file)
+        w.writerows(data)
+        file.close()
+
+    def setFromCsv(self):
+        if os.path.exists(self.python_temp_csv):
+            cache_value_list=[]
+            file = open(self.python_temp_csv, 'r')
+            for i in csv.DictReader(file):
+                cache_value_list.append(i['value'])
+            file.close()
+            for index,value in enumerate(cache_value_list):
+                self.save_UI_list[index].setText(value)
+
+    def getValue(self,widget):
+        if type(widget)==QtWidgets.QLineEdit:
+            return widget.text()
 
 class prmanToolsLighting_ui(QtWidgets.QWidget,prmanToolsLighting_ui.Ui_main_widget):
     def __init__(self, parent=None):

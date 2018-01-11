@@ -18,3 +18,8 @@ def convertUI(ui_name):
 
 
 convertUI('redShiftTools_objSet.ui')
+convertUI('redShiftTools_objSet_mesh.ui')
+convertUI('redShiftTools_objSet_objectId.ui')
+convertUI('redShiftTools_objSet_visbility.ui')
+convertUI('redShiftTools_objSet_matte.ui')
+

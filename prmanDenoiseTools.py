@@ -4,7 +4,6 @@ import maya.cmds as cmds
 import pymel.core as pm
 import os
 import sys
-import ice
 import threading
 import signal
 import time
@@ -12,6 +11,11 @@ import multiprocessing
 import datetime
 import getpass
 import csv
+prman_path=os.getenv('RMANTREE')
+ice_path=prman_path+"lib\python2.7\Lib\site-packages\ice"
+sys.path.append(ice_path)
+import ice
+
 maya_version=cmds.about(version=True)
 username=getpass.getuser()
 ui_path='C:/Users/'+username+'/Documents/maya/'+maya_version+'/scripts/ui'
@@ -19,6 +23,7 @@ sys.path.append(ui_path)
 sys.path.append("//mcd-one/database/assets/scripts/maya_scripts/ui")
 import prmanDenoiseToolsCMD_ui;reload(prmanDenoiseToolsCMD_ui)
 import prmanDenoiseToolsMergeEXR_ui;reload(prmanDenoiseToolsMergeEXR_ui)
+
 
 dialog=None
 class Black_UI(QtWidgets.QDialog):
@@ -40,10 +45,41 @@ class Black_UI(QtWidgets.QDialog):
         main_tab_Widget.addTab(self.denoiseCMD_wid, "denoiseCMD")
         main_tab_Widget.addTab(self.mergeEXR_wid, "mergeEXR")
         self.layout().addWidget(main_tab_Widget)
+        self.python_temp='C:/Users/'+username+'/Documents/maya/python_tools_temp'
+        self.python_temp_csv=self.python_temp+'/prmanDenoiseTools.csv'
+        denoiseCMD_save_UI_list=[self.denoiseCMD_wid.varianceFile_LE,self.denoiseCMD_wid.aovLightGrpName_LE,self.denoiseCMD_wid.outDir_LE,self.denoiseCMD_wid.frameRangeStart_LE,self.denoiseCMD_wid.frameRangeEnd_LE]
+        mergeEXR_save_UI_list=[self.mergeEXR_wid.filterExr_LE,self.mergeEXR_wid.baseName_LE,self.mergeEXR_wid.aovLightGrpName_LE,self.mergeEXR_wid.outDir_LE,self.mergeEXR_wid.frameRangeStart_LE,self.mergeEXR_wid.frameRangeEnd_LE]
+        self.save_UI_list=denoiseCMD_save_UI_list+mergeEXR_save_UI_list
+        self.setFromCsv()
 
     def closeEvent(self, event):
-        self.denoiseCMD_wid.writeCsv()
-        self.mergeEXR_wid.writeCsv()
+        self.writeCsv()
+
+    def writeCsv(self):
+        if os.path.exists(self.python_temp) == False:
+            os.mkdir(self.python_temp)
+        data=[['var_name','value']]
+        for obj in self.save_UI_list:
+            obj_info=[obj.objectName(),self.getValue(obj)]
+            data.append(obj_info)
+        file = open(self.python_temp_csv,'w')
+        w = csv.writer(file)
+        w.writerows(data)
+        file.close()
+
+    def setFromCsv(self):
+        if os.path.exists(self.python_temp_csv):
+            cache_value_list=[]
+            file = open(self.python_temp_csv, 'r')
+            for i in csv.DictReader(file):
+                cache_value_list.append(i['value'])
+            file.close()
+            for index,value in enumerate(cache_value_list):
+                self.save_UI_list[index].setText(value)
+
+    def getValue(self,widget):
+        if type(widget)==QtWidgets.QLineEdit:
+            return widget.text()
 
 class denoiseCMD_ui(QtWidgets.QWidget,prmanDenoiseToolsCMD_ui.Ui_main_widget):
     def __init__(self, parent=None):
@@ -71,8 +107,6 @@ class denoiseCMD_ui(QtWidgets.QWidget,prmanDenoiseToolsCMD_ui.Ui_main_widget):
         cpu_cores=multiprocessing.cpu_count()
         self.nOfThreads_SB.setRange(1,cpu_cores)
         self.nOfThreads_SB.setValue(cpu_cores)
-        self.save_UI_list=[self.varianceFile_LE,self.aovLightGrpName_LE,self.outDir_LE,self.frameRangeStart_LE,self.frameRangeEnd_LE]
-        self.setFromCsv()
 
     def connectInterface(self):
         self.varianceFileOpen_PB.clicked.connect(self.varianceOpenFile)
@@ -318,31 +352,6 @@ class denoiseCMD_ui(QtWidgets.QWidget,prmanDenoiseToolsCMD_ui.Ui_main_widget):
             pass
         return False
 
-    def writeCsv(self):
-        if os.path.exists(self.python_temp) == False:
-            os.mkdir(self.python_temp)
-        data=[['var_name','value']]
-        for obj in self.save_UI_list:
-            obj_info=[obj.objectName(),self.getValue(obj)]
-            data.append(obj_info)
-        file = open(self.python_temp_csv,'w')
-        w = csv.writer(file)
-        w.writerows(data)
-        file.close()
-
-    def setFromCsv(self):
-        if os.path.exists(self.python_temp_csv):
-            cache_value_list=[]
-            file = open(self.python_temp_csv, 'r')
-            for i in csv.DictReader(file):
-                cache_value_list.append(i['value'])
-            file.close()
-            for index,value in enumerate(cache_value_list):
-                self.save_UI_list[index].setText(value)
-
-    def getValue(self,widget):
-        if type(widget)==QtWidgets.QLineEdit:
-            return widget.text()
 
 class jsonWindow(QtWidgets.QWidget):
     def __init__(self,parentObj):
@@ -422,8 +431,6 @@ class mergeEXR_ui(QtWidgets.QWidget,prmanDenoiseToolsMergeEXR_ui.Ui_main_widget)
         self.python_temp='C:/Users/'+username+'/Documents/maya/python_tools_temp'
         self.python_temp_csv=self.python_temp+'/mergeEXR.csv'
         self.connectInterface()
-        self.save_UI_list=[self.filterExr_LE,self.baseName_LE,self.aovLightGrpName_LE,self.outDir_LE,self.frameRangeStart_LE,self.frameRangeEnd_LE]
-        self.setFromCsv()
 
     def connectInterface(self):
         self.filterExrBro_PB.clicked.connect(self.filterExrBro)
@@ -574,32 +581,6 @@ class mergeEXR_ui(QtWidgets.QWidget,prmanDenoiseToolsMergeEXR_ui.Ui_main_widget)
     def time_cost(self,real_time):
         text="It cost %.2f sec" % (real_time)
         self.info_textEdit.append(text)
-
-    def writeCsv(self):
-        if os.path.exists(self.python_temp) == False:
-            os.mkdir(self.python_temp)
-        data=[['var_name','value']]
-        for obj in self.save_UI_list:
-            obj_info=[obj.objectName(),self.getValue(obj)]
-            data.append(obj_info)
-        file = open(self.python_temp_csv,'w')
-        w = csv.writer(file)
-        w.writerows(data)
-        file.close()
-
-    def setFromCsv(self):
-        if os.path.exists(self.python_temp_csv):
-            cache_value_list=[]
-            file = open(self.python_temp_csv, 'r')
-            for i in csv.DictReader(file):
-                cache_value_list.append(i['value'])
-            file.close()
-            for index,value in enumerate(cache_value_list):
-                self.save_UI_list[index].setText(value)
-
-    def getValue(self,widget):
-        if type(widget)==QtWidgets.QLineEdit:
-            return widget.text()
             
 class merge_thread(QtCore.QThread):
     count = QtCore.Signal(int)
