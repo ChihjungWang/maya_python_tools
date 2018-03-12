@@ -1,7 +1,9 @@
 import sys, pprint
 import os
 import getpass
+import maya.cmds as cmds
 from pyside2uic import compileUi
+
 
 maya_version=cmds.about(version=True)
 username=getpass.getuser()
@@ -17,9 +19,6 @@ def convertUI(ui_name):
 	py_file.close()
 
 
-convertUI('redShiftTools_objSet.ui')
-convertUI('redShiftTools_objSet_mesh.ui')
-convertUI('redShiftTools_objSet_objectId.ui')
-convertUI('redShiftTools_objSet_visbility.ui')
-convertUI('redShiftTools_objSet_matte.ui')
+convertUI('pixiTools_export_json.ui')
+
 
