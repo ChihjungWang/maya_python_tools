@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:/Users/chihjung/Documents/maya/2017/scripts/ui/pixiTools_export_json.ui'
 #
-# Created: Fri Mar 30 17:24:01 2018
+# Created: Wed Jun 20 10:31:34 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!

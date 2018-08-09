@@ -159,15 +159,21 @@
       </layout>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="planeRenameEdit_label">
+      <widget class="QLabel" name="particle_name_label">
        <property name="minimumSize">
         <size>
          <width>140</width>
          <height>0</height>
         </size>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>140</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
-        <string>Auto Rename</string>
+        <string>particle name</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -175,41 +181,35 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <layout class="QHBoxLayout" name="autoRename_layout">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <property name="spacing">
         <number>4</number>
        </property>
        <item>
-        <widget class="QLineEdit" name="autoRename_LE">
+        <widget class="QLineEdit" name="particleName_LE">
          <property name="maximumSize">
           <size>
-           <width>100</width>
+           <width>120</width>
            <height>16777215</height>
           </size>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="readOnly">
-          <bool>false</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="autoRename_PB">
+        <widget class="QPushButton" name="bakeToObject_PB">
          <property name="maximumSize">
           <size>
-           <width>100</width>
+           <width>170</width>
            <height>16777215</height>
           </size>
          </property>
          <property name="text">
-          <string>Rename</string>
+          <string>Bake To Object</string>
          </property>
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer_9">
+        <spacer name="horizontalSpacer_3">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -223,45 +223,45 @@
        </item>
       </layout>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="textureFile_label">
+     <item row="5" column="0">
+      <widget class="QLabel" name="objGrp_label">
        <property name="minimumSize">
         <size>
          <width>140</width>
          <height>0</height>
         </size>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>140</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
-        <string>Texture file</string>
+        <string>Objects Group</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item row="5" column="1">
+      <layout class="QHBoxLayout" name="objGrp_layout">
        <property name="spacing">
         <number>4</number>
        </property>
        <item>
-        <widget class="QLineEdit" name="textureFile_LE"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="textureFileBro_PB">
+        <widget class="QLineEdit" name="objGrp_LE">
          <property name="maximumSize">
           <size>
-           <width>20</width>
+           <width>160</width>
            <height>16777215</height>
           </size>
-         </property>
-         <property name="text">
-          <string>...</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="textureFileOpen_PB">
+        <widget class="QPushButton" name="objGrpPick_PB">
          <property name="maximumSize">
           <size>
            <width>100</width>
@@ -269,55 +269,12 @@
           </size>
          </property>
          <property name="text">
-          <string>Open</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="shadeEdit_label">
-       <property name="minimumSize">
-        <size>
-         <width>140</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Shader Edit</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <property name="spacing">
-        <number>4</number>
-       </property>
-       <item>
-        <widget class="QPushButton" name="createLambert_PB">
-         <property name="text">
-          <string>Create lambert</string>
+          <string>Pick</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="planeEditFixSize_PB">
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Fix Mesh Size</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_10">
+        <spacer name="horizontalSpacer_8">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -331,7 +288,103 @@
        </item>
       </layout>
      </item>
-     <item row="4" column="0">
+     <item row="6" column="0">
+      <widget class="QLabel" name="instanceGrp_label">
+       <property name="minimumSize">
+        <size>
+         <width>140</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>140</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Instance Group</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <layout class="QHBoxLayout" name="instanceGrp_layout">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QLineEdit" name="instanceGrp_LE">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>160</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="instanceGrpPick_PB">
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Pick</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="sourceCam_label">
+       <property name="minimumSize">
+        <size>
+         <width>140</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>140</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="sizeIncrement">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Source Camera</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
       <widget class="QLabel" name="canvasCam_label">
        <property name="minimumSize">
         <size>
@@ -353,165 +406,7 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
-      <layout class="QHBoxLayout" name="canvasCam_layout">
-       <property name="spacing">
-        <number>4</number>
-       </property>
-       <item>
-        <widget class="QLineEdit" name="canvasCam_LE">
-         <property name="maximumSize">
-          <size>
-           <width>160</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>canvasCam</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="canvasCamSetUp_PB">
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Set Up</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_11">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="canvasSize_label">
-       <property name="minimumSize">
-        <size>
-         <width>140</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>140</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Canvas Size</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <layout class="QHBoxLayout" name="canvasSize_layout">
-       <property name="spacing">
-        <number>4</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="canvasSizeW_label">
-         <property name="minimumSize">
-          <size>
-           <width>30</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>50</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>width</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="canvasSizeW_LE">
-         <property name="maximumSize">
-          <size>
-           <width>50</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>1920</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="canvasSizeH_label">
-         <property name="minimumSize">
-          <size>
-           <width>30</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>50</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>height</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="canvasSizeH_LE">
-         <property name="maximumSize">
-          <size>
-           <width>50</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>1080</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item row="6" column="0">
+     <item row="9" column="0">
       <widget class="QLabel" name="frameRange_label">
        <property name="minimumSize">
         <size>
@@ -533,7 +428,7 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="1">
+     <item row="9" column="1">
       <layout class="QHBoxLayout" name="frameRange_layout">
        <property name="spacing">
         <number>4</number>
@@ -690,8 +585,8 @@
        </item>
       </layout>
      </item>
-     <item row="7" column="0">
-      <widget class="QLabel" name="label">
+     <item row="10" column="0">
+      <widget class="QLabel" name="sourceSize_label">
        <property name="minimumSize">
         <size>
          <width>140</width>
@@ -705,14 +600,216 @@
         </size>
        </property>
        <property name="text">
-        <string>Animation Layer</string>
+        <string>Source Size</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item row="8" column="0">
+     <item row="10" column="1">
+      <layout class="QHBoxLayout" name="sourceSize_layout">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="sourceSizeW_label">
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>50</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>width</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="sourceSizeW_LE">
+         <property name="maximumSize">
+          <size>
+           <width>50</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>1024</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="sourceSizeH_label">
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>50</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>height</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="sourceSizeH_LE">
+         <property name="maximumSize">
+          <size>
+           <width>50</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>1024</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="11" column="0">
+      <widget class="QLabel" name="canvasSize_label">
+       <property name="minimumSize">
+        <size>
+         <width>140</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>140</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Canvas Size</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="1">
+      <layout class="QHBoxLayout" name="canvasSize_layout">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="canvasSizeW_label">
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>50</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>width</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="canvasSizeW_LE">
+         <property name="maximumSize">
+          <size>
+           <width>50</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>1920</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="canvasSizeH_label">
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>50</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>height</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="canvasSizeH_LE">
+         <property name="maximumSize">
+          <size>
+           <width>50</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>1080</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="12" column="0">
       <widget class="QLabel" name="exportPath_label">
        <property name="minimumSize">
         <size>
@@ -734,7 +831,7 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="1">
+     <item row="12" column="1">
       <layout class="QHBoxLayout" name="outDir_layout">
        <property name="spacing">
         <number>4</number>
@@ -770,7 +867,7 @@
        </item>
       </layout>
      </item>
-     <item row="9" column="0">
+     <item row="13" column="0">
       <widget class="QLabel" name="jsonName_label">
        <property name="minimumSize">
         <size>
@@ -792,7 +889,7 @@
        </property>
       </widget>
      </item>
-     <item row="9" column="1">
+     <item row="13" column="1">
       <layout class="QHBoxLayout" name="jsonName_layout">
        <property name="spacing">
         <number>4</number>
@@ -816,8 +913,8 @@
        </item>
       </layout>
      </item>
-     <item row="10" column="0">
-      <widget class="QLabel" name="rootJoint_label">
+     <item row="15" column="0">
+      <widget class="QLabel" name="textureMode_label">
        <property name="minimumSize">
         <size>
          <width>140</width>
@@ -831,57 +928,44 @@
         </size>
        </property>
        <property name="text">
-        <string>Root Joint</string>
+        <string>Texture Mode</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item row="10" column="1">
-      <layout class="QHBoxLayout" name="rootJoint_layout">
+     <item row="15" column="1">
+      <layout class="QHBoxLayout" name="textureMode_layout">
        <property name="spacing">
         <number>4</number>
        </property>
        <item>
-        <widget class="QLineEdit" name="rootJoint_LE">
-         <property name="maximumSize">
-          <size>
-           <width>160</width>
-           <height>16777215</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="rootJointPick_PB">
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
+        <widget class="QRadioButton" name="textureMode_01_RB">
          <property name="text">
-          <string>Pick</string>
+          <string>Sequence</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="setSameKey_PB">
+        <widget class="QRadioButton" name="textureMode_02_RB">
          <property name="text">
-          <string>set same key</string>
+          <string>Single-Frame Multi-Images</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="clearKey_PB">
+        <widget class="QRadioButton" name="textureMode_03_RB">
          <property name="text">
-          <string>clear key</string>
+          <string>Single-Frame Single-Image</string>
          </property>
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer_12">
+        <spacer name="horizontalSpacer_5">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -895,7 +979,7 @@
        </item>
       </layout>
      </item>
-     <item row="11" column="0">
+     <item row="16" column="0">
       <widget class="QLabel" name="exportOption_label">
        <property name="minimumSize">
         <size>
@@ -917,52 +1001,11 @@
        </property>
       </widget>
      </item>
-     <item row="11" column="1">
+     <item row="16" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="spacing">
         <number>4</number>
        </property>
-       <item>
-        <widget class="QLabel" name="speed_label">
-         <property name="maximumSize">
-          <size>
-           <width>50</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>speed</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDoubleSpinBox" name="speed_doubleSpinBox">
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>50</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="decimals">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <double>8.000000000000000</double>
-         </property>
-         <property name="singleStep">
-          <double>0.100000000000000</double>
-         </property>
-         <property name="value">
-          <double>1.000000000000000</double>
-         </property>
-        </widget>
-       </item>
        <item>
         <widget class="QCheckBox" name="scale_CB">
          <property name="text">
@@ -991,9 +1034,16 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="drawOrder_CB">
+        <widget class="QCheckBox" name="zdepth_CB">
          <property name="text">
-          <string>DrawOrder</string>
+          <string>ZDepth</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="cropBroders_CB">
+         <property name="text">
+          <string>Border Falloff</string>
          </property>
         </widget>
        </item>
@@ -1013,34 +1063,323 @@
       </layout>
      </item>
      <item row="7" column="1">
-      <layout class="QHBoxLayout" name="baseAnimLayer_layout">
+      <layout class="QHBoxLayout" name="sourceCam_layout">
        <property name="spacing">
         <number>4</number>
        </property>
-       <property name="margin">
-        <number>0</number>
-       </property>
        <item>
-        <widget class="QLabel" name="none_label">
-         <property name="minimumSize">
-          <size>
-           <width>80</width>
-           <height>0</height>
-          </size>
-         </property>
+        <widget class="QLineEdit" name="sourceCam_LE">
          <property name="maximumSize">
           <size>
-           <width>80</width>
+           <width>160</width>
            <height>16777215</height>
           </size>
-         </property>
-         <property name="text">
-          <string>none</string>
          </property>
         </widget>
        </item>
        <item>
-        <spacer name="baseAnimLayer_spacer">
+        <widget class="QPushButton" name="sourceCamSetUp_PB">
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Set Up</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_1">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="8" column="1">
+      <layout class="QHBoxLayout" name="canvasCam_layout">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QLineEdit" name="canvasCam_LE">
+         <property name="maximumSize">
+          <size>
+           <width>160</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="canvasCamSetUp_PB">
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Set Up</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_11">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="planeRenameEdit_label">
+       <property name="minimumSize">
+        <size>
+         <width>140</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Plane Rename Edit</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <layout class="QHBoxLayout" name="planeEdit_layout">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QLineEdit" name="planeEdit_LE">
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="planeEdit_label">
+         <property name="text">
+          <string>_baseImage_mesh</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="planeEditReName_PB">
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Rename</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_9">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="shadeEdit_label">
+       <property name="minimumSize">
+        <size>
+         <width>140</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Shader Edit</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="createLambert_PB">
+         <property name="text">
+          <string>Create lambert</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="planeEditFixSize_PB">
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Fix Mesh Size</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_10">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="textureFile_label">
+       <property name="minimumSize">
+        <size>
+         <width>140</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Texture file</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QLineEdit" name="textureFile_LE"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="textureFileBro_PB">
+         <property name="maximumSize">
+          <size>
+           <width>20</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="textureFileOpen_PB">
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Open</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="14" column="0">
+      <widget class="QLabel" name="rootJoint_label">
+       <property name="minimumSize">
+        <size>
+         <width>140</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>140</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Root Joint</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="1">
+      <layout class="QHBoxLayout" name="rootJoint_layout">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QLineEdit" name="rootJoint_LE">
+         <property name="maximumSize">
+          <size>
+           <width>160</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="rootJointPick_PB">
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Pick</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_12">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -1065,6 +1404,20 @@
       <widget class="QPushButton" name="shaderSetToDefault_PB">
        <property name="text">
         <string>Shader Set To Default Layer</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="exportJson_PB">
+       <property name="text">
+        <string>Export Json</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="convertSimpleJson_PB">
+       <property name="text">
+        <string>Convert To Simple Json</string>
        </property>
       </widget>
      </item>
