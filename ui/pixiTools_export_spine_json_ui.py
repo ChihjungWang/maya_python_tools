@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:/Users/chihjung/Documents/maya/2017/scripts/ui/pixiTools_export_spine_json.ui'
+# Form implementation generated from reading ui file 'C:/Users/chihjung/Documents/maya/2018/scripts/ui/pixiTools_export_spine_json.ui'
 #
-# Created: Wed Jun 20 10:31:34 2018
+# Created: Wed Nov  7 11:19:51 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
