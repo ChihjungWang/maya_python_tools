@@ -12,6 +12,8 @@ import sys
 import math
 import random
 import time
+import pprint
+from shutil import copyfile
 
 maya_version = cmds.about(version=True)
 username = getpass.getuser()
@@ -92,7 +94,13 @@ class Black_UI(QtWidgets.QDialog):
             self.pixiTools_particleEdit_wid.attr_set_type_group,
             self.pixiTools_particleEdit_wid.minValue_LE,
             self.pixiTools_particleEdit_wid.maxValue_LE,
-            self.pixiTools_particleEdit_wid.keyIndex_LE
+            self.pixiTools_particleEdit_wid.keyIndex_LE,
+            self.pixiTools_particleEdit_wid.motionPathCurve_LE,
+            self.pixiTools_particleEdit_wid.joint_list_LE,
+            self.pixiTools_particleEdit_wid.motionPathStartFrame_LE,
+            self.pixiTools_particleEdit_wid.motionPathEndFrame_LE,
+            self.pixiTools_particleEdit_wid.motionPathKeys_LE,
+            self.pixiTools_particleEdit_wid.motionPathPow_LE
         ]
         self.setFromJson()
 
@@ -150,6 +158,7 @@ class Black_UI(QtWidgets.QDialog):
         json.dump(data_dict, file2, ensure_ascii=True, indent=4)
         file2.close()
 # ------------------------------------------------------------------------------------
+
 
 class pixiTools_export_json_ui(QtWidgets.QWidget, pixiTools_export_json_ui.Ui_main_widget):
     def __init__(self, parent=None):
@@ -828,6 +837,7 @@ class pixiTools_export_json_ui(QtWidgets.QWidget, pixiTools_export_json_ui.Ui_ma
             pass
         return False
 
+
 class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_json_ui.Ui_main_widget):
     def __init__(self, parent=None):
         super(pixiTools_export_spine_json_ui, self).__init__(parent)
@@ -1325,9 +1335,18 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                     skin_info_dict["default"][transform_name][attachment_name]["y"] = y
         return skin_info_dict
 
+    def skeletonData(self):
+        skeleton = {
+            "width": 1920,
+            "height": 1080
+        }
+        return skeleton
+
     def exportJsonSpine_PB_hit(self):
+        mel = 'ogs -pause;'
+        pm.mel.eval(mel)
         time_start = time.time()
-        self.setRenderLayer('exportJson_RL') 
+        self.setRenderLayer('exportJson_RL')
         root_joint = self.rootJoint_LE.text()
         root_joint = pm.PyNode(root_joint)
         self.fixName(root_joint, 'mesh')
@@ -1335,7 +1354,9 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         bone_data = self.getAllBones()
         slot_data = self.getAllSlots()
         skin_data = self.getSkinList()
+        skeleton_data = self.skeletonData()
         final_dict = {}
+        final_dict['skeleton'] = skeleton_data
         final_dict['bones'] = bone_data
         final_dict['slots'] = slot_data
         final_dict['skins'] = skin_data
@@ -1376,6 +1397,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         with open(json_file, "w") as f:
             f.write(data)
         '''
+        self.exportTexures()
         time_end = time.time()
         total_time = time_end - time_start
         m, s = divmod(total_time, 60)
@@ -1795,7 +1817,6 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         else:
             return False
 
-
     def getImageIndex(self, file_node):
         frame_extension = file_node.getAttr('useFrameExtension')
         image_file = file_node.getAttr('fileTextureName')
@@ -1895,6 +1916,41 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
             elif child.layout() is not None:
                 self.clearLayout(child.layout())
 
+    def exportTexures(self):
+        pm.currentTime(1)
+        root_joint = self.rootJoint_LE.text()
+        root_joint = pm.PyNode(root_joint)
+        mesh_list = pm.listRelatives(root_joint, allDescendents=True, type='mesh')
+        texture_list = []
+        for mesh in mesh_list:
+            file = self.getTextureInfo(mesh)[4]
+            if file[0:12] == 'sourceimages':
+                current_workspace = pm.workspace(q=True, rd=True)
+                file = current_workspace+file
+            if file not in texture_list:
+                texture_list.append(file)
+        for file in texture_list:
+            if self.getSequence(file) is not False:
+                min_frame, max_frame = self.getSequence(file)
+                for index in range(min_frame, max_frame):
+                    scr_path = os.path.dirname(file)
+                    nameExt = os.path.basename(file)
+                    name, Ext = os.path.splitext(nameExt)
+                    index = '%04d' % (index+1)
+                    final_name = scr_path+"/"+name[0:-4]+index+Ext
+                    if final_name not in texture_list:
+                        texture_list.append(final_name)
+        export_path = self.outDir_LE.text()
+        for file in texture_list:
+            print file
+            scr_path = os.path.dirname(file)
+            scr_name = os.path.basename(file)
+            export_file = export_path+'\\'+scr_name
+            if os.path.exists(export_file) is True:
+                os.remove(export_file)
+            copyfile(file, export_file)
+
+
 class checkBox_class(QtWidgets.QCheckBox):
     def __init__(self, parent, node):
         QtWidgets.QCheckBox.__init__(self)
@@ -1915,6 +1971,7 @@ class checkBox_class(QtWidgets.QCheckBox):
         self.parent.animLayer_cb_list.sort()
         print self.parent.animLayer_cb_list
         '''
+
 
 class pixiTools_particleEdit_ui(QtWidgets.QWidget, pixiTools_particleEdit_ui.Ui_main_widget):
     def __init__(self, parent=None):
@@ -1958,6 +2015,10 @@ class pixiTools_particleEdit_ui(QtWidgets.QWidget, pixiTools_particleEdit_ui.Ui_
         self.scaleConvertValue_PB.clicked.connect(self.scaleConvertValue_PB_hit)
         self.translateConvertValue_PB.clicked.connect(self.translateConvertValue_PB_hit)
         self.speedConvertTime_PB.clicked.connect(self.speedConvertTime_PB_hit)
+        self.motionPathAddCurve_PB.clicked.connect(self.motionPathAddCurve_PB_hit)
+        self.add_joint_PB.clicked.connect(self.add_joint_PB_hit)
+        self.curveAttach_PB.clicked.connect(self.curveAttach_PB_hit)
+        self.resetPosition_PB.clicked.connect(self.resetPosition_PB_hit)
 
     def setDefault(self):
         pass
@@ -2256,6 +2317,147 @@ class pixiTools_particleEdit_ui(QtWidgets.QWidget, pixiTools_particleEdit_ui.Ui_
                         ture_key = ture_key + centerFrame
                         pm.keyframe(node, edit=True, attribute=attr, timeChange=ture_key, time=(key))
         pm.undoInfo(cck=True)
+
+    def curveAttach_PB_hit(self):
+        s_frame = int(self.motionPathStartFrame_LE.text())
+        e_frame = int(self.motionPathEndFrame_LE.text())
+        keys = int(self.motionPathKeys_LE.text())
+        pow_num = float(self.motionPathPow_LE.text())
+        key_list, value_list = self.curve_key_convert(s_frame, e_frame, keys, pow_num)
+        curve_list = self.motionPathCurve_LE.text().split(',')
+        curve_max = len(curve_list)
+        joint_list = self.joint_list_LE.text().split(',')
+        motion_path_list = []
+        self.resetPosition_PB_hit()
+        for index, joint in enumerate(joint_list):
+            num = index % curve_max
+            joint_node = pm.PyNode(joint)
+            curve_node = pm.PyNode(curve_list[num])
+            motion_path = pm.pathAnimation(joint_node, c=curve_node, fractionMode=True, follow=True, followAxis='y', upAxis='z', worldUpType='vector', worldUpVector=[0, 0, 1], inverseUp=False, inverseFront=False, startTimeU=s_frame, endTimeU=e_frame)
+            motion_path_list.append(motion_path)
+        for motion_path in motion_path_list:
+            for index, key in enumerate(key_list):
+                if index != 0 and index != len(key_list)-1:
+                    value = value_list[index]
+                    pm.setKeyframe(motion_path, t=[key], at='u', v=value)
+        key_all_data_dict = {}
+        for joint in joint_list:
+            joint = pm.PyNode(joint)
+            motion_path_node = pm.listConnections(joint.specifiedManipLocation, d=False, s=True, type='motionPath')[0]
+            key_list = pm.keyframe(motion_path_node, query=True, at='u')
+            key_all_data_dict[joint.name()] = {}
+            for key in key_list:
+                cmds.currentTime(key)
+                key_all_data_dict[joint.name()][str(key)] = {}
+                key_all_data_dict[joint.name()][str(key)]['tx'] = round(joint.getAttr('translateX'), 2)
+                key_all_data_dict[joint.name()][str(key)]['ty'] = round(joint.getAttr('translateY'), 2)
+                key_all_data_dict[joint.name()][str(key)]['rz'] = round(joint.getAttr('rotateZ'), 2)
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(key_all_data_dict)
+        self.resetPosition_PB_hit()
+        for joint in key_all_data_dict:
+            joint_node = pm.PyNode(joint)
+            for key in key_all_data_dict[joint]:
+                tx = key_all_data_dict[joint][key]['tx']
+                ty = key_all_data_dict[joint][key]['ty']
+                rz = key_all_data_dict[joint][key]['rz']
+                pm.setKeyframe(joint_node, t=[float(key)], at='translateX', v=tx)
+                pm.setKeyframe(joint_node, t=[float(key)], at='translateY', v=ty)
+                pm.setKeyframe(joint_node, t=[float(key)], at='rotateZ', v=rz)
+            pm.filterCurve(joint_node.rotateZ)
+
+    def resetPosition_PB_hit(self):
+        joint_list = self.joint_list_LE.text().split(',')
+        for joint in joint_list:
+            self.deleteMotionPath(joint)
+
+    def deleteMotionPath(self, joint_node):
+        node = pm.PyNode(joint_node)
+        del_attr_list = [node.tx, node.ty, node.tz, node.rx, node.ry, node.rz, node.alphaGain]
+        for del_attr in del_attr_list:
+            attr_list = pm.listConnections(del_attr, d=False, s=True, p=True)
+            if len(attr_list) > 0:
+                for attr in attr_list:
+                    pm.disconnectAttr(attr, del_attr)
+        motion_node_list = pm.listConnections(node.specifiedManipLocation, d=False, s=True, type='motionPath')
+        pm.delete(motion_node_list)
+        node.setAttr('translateX', 0)
+        node.setAttr('translateY', 0)
+        node.setAttr('translateZ', 0)
+        node.setAttr('rotateX', 0)
+        node.setAttr('rotateY', 0)
+        node.setAttr('rotateZ', 0)
+        node.setAttr('alphaGain', 1)
+
+
+
+
+    def curve_key_convert(self, s_frame, e_frame, keys, pow_num):
+        if pow_num != 1 and pow_num != 0:
+            log_list = []
+            for i in range(keys+1):
+                num = round(math.pow(pow_num, i), 3)
+                log_list.append(num)
+            rate_list = []
+            for i in log_list:
+                rate = (i-log_list[0])/(log_list[-1]-log_list[0])
+                rate = round(rate, 3)
+                rate_list.append(rate)
+
+            key_list = []
+            for rate in rate_list:
+                num = (e_frame-s_frame)*rate+s_frame
+                num = round(num, 3)
+                key_list.append(num)
+
+            value_list = [0]
+            for i in range(keys):
+                value = 1/float(keys)*(i+1)
+                value = round(value, 2)
+                value_list.append(value)
+            return key_list, value_list
+
+        elif pow_num == 1:
+            key_list = [s_frame]
+            for i in range(keys):
+                key = s_frame+(e_frame-s_frame)/float(keys)*(i+1)
+                key = round(key, 2)
+                key_list.append(key)
+
+            value_list = [0]
+            for i in range(keys):
+                value = 1/float(keys)*(i+1)
+                value = round(value, 2)
+                value_list.append(value)
+            return key_list, value_list
+
+    def motionPathAddCurve_PB_hit(self):
+        node_list = pm.ls(sl=True)
+        curve_list = []
+        for node in node_list:
+            if node.getShape().type() == "nurbsCurve":
+                curve_list.append(node)
+        name_list = []
+        for curve in curve_list:
+            name_list.append(curve.name())
+        node_text = ', '.join(name_list)
+        self.motionPathCurve_LE.setText(node_text)
+        to_list = node_text.split()
+
+    def add_joint_PB_hit(self):
+        node_list = pm.ls(sl=True)
+        print node_list
+        joint_list = []
+        for node in node_list:
+            if node.type() == "joint":
+                joint_list.append(node)
+        name_list = []
+        for joint in joint_list:
+            name_list.append(joint.name())
+        node_text = ', '.join(name_list)
+        self.joint_list_LE.setText(node_text)
+        to_list = node_text.split()
+
 
 # ------------------------------------------------------------------------------------
 
