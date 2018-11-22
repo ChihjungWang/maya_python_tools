@@ -421,7 +421,8 @@ class prmanR22_tools_renderSets_ui(QtWidgets.QWidget, prmanR22_tools_renderSets_
         return mesh_list
 
     def matteIdAttach_PB_hit(self):
-        attr_name, matteIdColor = self.checkMatteIdData()
+        self.createMatteAttrNode()
+        attr_name, matteIdColor, attr_node = self.checkMatteIdData()
         mesh_list = self.getSelMeshList()
         for mesh in mesh_list:
             exists = pm.attributeQuery(attr_name, node=mesh, ex=True)
@@ -430,52 +431,66 @@ class prmanR22_tools_renderSets_ui(QtWidgets.QWidget, prmanR22_tools_renderSets_
                 pm.addAttr(mesh, longName=attr_name+'R', defaultValue=1.0, attributeType='float', parent=attr_name, keyable=True)
                 pm.addAttr(mesh, longName=attr_name+'G', defaultValue=1.0, attributeType='float', parent=attr_name, keyable=True)
                 pm.addAttr(mesh, longName=attr_name+'B', defaultValue=1.0, attributeType='float', parent=attr_name, keyable=True)
-            if matteIdColor == 'red':
-                mesh.setAttr(attr_name, (1, 0, 0))
-            if matteIdColor == 'green':
-                mesh.setAttr(attr_name, (0, 1, 0))
-            if matteIdColor == 'blue':
-                mesh.setAttr(attr_name, (0, 0, 1))
+            pm.connectAttr(attr_node.defaultFloat3, mesh.name()+'.'+attr_name, f=True)
 
     def matteIdDetach_PB_hit(self):
+        self.createMatteAttrNode()
         mesh_list = self.getSelMeshList()
-        attr_name, matteIdColor = self.checkMatteIdData()
+        attr_name, matteIdColor, attr_node = self.checkMatteIdData()
         for mesh in mesh_list:
             exists = pm.attributeQuery(attr_name, node=mesh, ex=True)
             if exists is True:
                 pm.deleteAttr(mesh, at=attr_name)
 
     def checkMatteIdData(self):
-        matteIdNum = self.matteIdNum_combobox.currentText()
-        attr_name = 'rmanC' + matteIdNum
+        matteID_num = self.matteIdNum_combobox.currentText()
+        attr_name = 'rmanC' + matteID_num
         if self.matteIdRed_RB.isChecked():
             matteIdColor = 'red'
+            attr_node = pm.PyNode(matteID_num + '_red_pxrAttr')
         elif self.matteIdGreen_RB.isChecked():
             matteIdColor = 'green'
+            attr_node = pm.PyNode(matteID_num + '_green_pxrAttr')
         elif self.matteIdBlue_RB.isChecked():
             matteIdColor = 'blue'
-        return attr_name, matteIdColor
+            attr_node = pm.PyNode(matteID_num + '_blue_pxrAttr')
+        return attr_name, matteIdColor, attr_node
+
+    def createMatteAttrNode(self):
+        for num in range(7):
+            matteID_r = 'MatteID'+str(num)+'_red_pxrAttr'
+            matteID_g = 'MatteID'+str(num)+'_green_pxrAttr'
+            matteID_b = 'MatteID'+str(num)+'_blue_pxrAttr'
+            if pm.objExists(matteID_r):
+                print str(matteID_r)+' already exists'
+            else:
+                node_r = pm.shadingNode('PxrAttribute', at=True, n=matteID_r)
+            node_r = pm.PyNode(matteID_r)
+            node_r.setAttr('defaultFloat3', (1, 0, 0))
+
+            if pm.objExists(matteID_g):
+                print str(matteID_g)+' already exists'
+            else:
+                node_g = pm.shadingNode('PxrAttribute', at=True, n=matteID_g)
+            node_g = pm.PyNode(matteID_g)
+            node_g.setAttr('defaultFloat3', (0, 1, 0))
+
+            if pm.objExists(matteID_b):
+                print str(matteID_b)+' already exists'
+            else:
+                node_b = pm.shadingNode('PxrAttribute', at=True, n=matteID_b)
+            node_b = pm.PyNode(matteID_b)
+            node_b.setAttr('defaultFloat3', (0, 0, 1))
 
     def matteIdSelect_PB_hit(self):
-        mesh_list = pm.ls(type='mesh')
-        attr_name, matteIdColor = self.checkMatteIdData()
-        action_list = []
-        for mesh in mesh_list:
-            mesh_t = mesh.getTransform()
-            exists = pm.attributeQuery(attr_name, node=mesh_t, ex=True)
-            if exists is True:
-                value = mesh_t.getAttr(attr_name)
-                print value
-                if matteIdColor == 'red':
-                    if value == (1, 0, 0):
-                        action_list.append(mesh_t)
-                elif matteIdColor == 'green':
-                    if value == (0, 1, 0):
-                        action_list.append(mesh_t)
-                elif matteIdColor == 'blue':
-                    if value == (0, 0, 1):
-                        action_list.append(mesh_t)
-        pm.select(action_list)
+        attr_name, matteIdColor, attr_node = self.checkMatteIdData()
+        node_list = pm.listConnections(attr_node.defaultFloat3, s=False, d=True)
+        sel_list = []
+        for node in node_list:
+            if node.type() != 'renderLayer':
+                sel_list.append(node)
+        pm.select(sel_list, replace=True)
+
 
     def matteIdPxrMatteId_PB_hit(self):
         if pm.objExists('global_matteID'):
@@ -537,7 +552,6 @@ class prmanR22_tools_renderSets_ui(QtWidgets.QWidget, prmanR22_tools_renderSets_
                 mesh_t = mesh.getTransform()
                 pm.editRenderLayerAdjustment(mesh_t.name()+'.'+attr)
                 mesh_t.setAttr(attr, option)
-
 
     def commonAttrOverrideRemove_PB_hit(self):
         current_RL = pm.editRenderLayerGlobals(query=True, currentRenderLayer=True)
