@@ -1,0 +1,458 @@
+[
+  {
+    "renderSetupLayer": {
+      "collections": [
+        {
+          "collection": {
+            "children": [
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "absOverride": {
+                        "attrValue": {
+                          "connectable": true, 
+                          "keyable": true, 
+                          "type": "Bool", 
+                          "value": false
+                        }, 
+                        "attribute": "visibility", 
+                        "localRender": false, 
+                        "name": "geo_vis_AO", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "name": "geo_hide", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "", 
+                      "staticSelection": "", 
+                      "typeFilter": 1
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }, 
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "absOverride": {
+                        "attrValue": {
+                          "connectable": true, 
+                          "enum": {
+                            "0": "None", 
+                            "1": "Catmull-Clark", 
+                            "2": "Loop", 
+                            "3": "Bilinear"
+                          }, 
+                          "type": "Enum", 
+                          "value": 1
+                        }, 
+                        "attribute": "rman_subdivScheme", 
+                        "localRender": false, 
+                        "name": "geo_rman_subd", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "name": "subD", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "", 
+                      "staticSelection": "", 
+                      "typeFilter": 2
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }, 
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "absOverride": {
+                        "attrValue": {
+                          "connectable": true, 
+                          "type": "Color", 
+                          "value": [
+                            1.0, 
+                            0.0, 
+                            0.0
+                          ]
+                        }, 
+                        "attribute": "rmanCMatteID0", 
+                        "localRender": false, 
+                        "name": "rmanCMatteID0_R_AO", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "labelColor": "No Color", 
+                  "name": "matteID0_R", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "", 
+                      "staticSelection": "", 
+                      "typeFilter": 1
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }, 
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "absOverride": {
+                        "attrValue": {
+                          "connectable": true, 
+                          "type": "Color", 
+                          "value": [
+                            0.0, 
+                            1.0, 
+                            0.0
+                          ]
+                        }, 
+                        "attribute": "rmanCMatteID0", 
+                        "localRender": false, 
+                        "name": "rmanCMatteID0_G_AO", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "labelColor": "No Color", 
+                  "name": "matteID0_G", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "", 
+                      "staticSelection": "", 
+                      "typeFilter": 1
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }, 
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "absOverride": {
+                        "attrValue": {
+                          "connectable": true, 
+                          "type": "Color", 
+                          "value": [
+                            0.0, 
+                            0.0, 
+                            1.0
+                          ]
+                        }, 
+                        "attribute": "rmanCMatteID0", 
+                        "localRender": false, 
+                        "name": "rmanCMatteID0_B_AO", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "labelColor": "No Color", 
+                  "name": "matteID0_B", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "", 
+                      "staticSelection": "", 
+                      "typeFilter": 1
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }, 
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "absOverride": {
+                        "attrValue": {
+                          "connectable": true, 
+                          "type": "Color", 
+                          "value": [
+                            1.0, 
+                            0.0, 
+                            0.0
+                          ]
+                        }, 
+                        "attribute": "rmanCMatteID1", 
+                        "localRender": false, 
+                        "name": "rmanCMatteID1_R_AO", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "labelColor": "No Color", 
+                  "name": "matteID1_R", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "", 
+                      "staticSelection": "", 
+                      "typeFilter": 1
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }, 
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "absOverride": {
+                        "attrValue": {
+                          "connectable": true, 
+                          "type": "Color", 
+                          "value": [
+                            0.0, 
+                            1.0, 
+                            0.0
+                          ]
+                        }, 
+                        "attribute": "rmanCMatteID1", 
+                        "localRender": false, 
+                        "name": "rmanCMatteID1_G_AO", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "labelColor": "No Color", 
+                  "name": "matteID1_G", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "", 
+                      "staticSelection": "", 
+                      "typeFilter": 1
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }, 
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "absOverride": {
+                        "attrValue": {
+                          "connectable": true, 
+                          "type": "Color", 
+                          "value": [
+                            0.0, 
+                            0.0, 
+                            1.0
+                          ]
+                        }, 
+                        "attribute": "rmanCMatteID1", 
+                        "localRender": false, 
+                        "name": "rmanCMatteID1_B_AO", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "labelColor": "No Color", 
+                  "name": "matteID1_B", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "", 
+                      "staticSelection": "", 
+                      "typeFilter": 1
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }, 
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "absOverride": {
+                        "attrValue": {
+                          "connectable": true, 
+                          "type": "Color", 
+                          "value": [
+                            1.0, 
+                            0.0, 
+                            0.0
+                          ]
+                        }, 
+                        "attribute": "rmanCMatteID2", 
+                        "localRender": false, 
+                        "name": "rmanCMatteID2_R_AO", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "labelColor": "No Color", 
+                  "name": "matteID2_R", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "", 
+                      "staticSelection": "", 
+                      "typeFilter": 1
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }, 
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "absOverride": {
+                        "attrValue": {
+                          "connectable": true, 
+                          "type": "Color", 
+                          "value": [
+                            0.0, 
+                            1.0, 
+                            0.0
+                          ]
+                        }, 
+                        "attribute": "rmanCMatteID2", 
+                        "localRender": false, 
+                        "name": "rmanCMatteID2_G_AO", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "labelColor": "No Color", 
+                  "name": "matteID2_G", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "", 
+                      "staticSelection": "", 
+                      "typeFilter": 1
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }, 
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "absOverride": {
+                        "attrValue": {
+                          "connectable": true, 
+                          "type": "Color", 
+                          "value": [
+                            0.0, 
+                            0.0, 
+                            1.0
+                          ]
+                        }, 
+                        "attribute": "rmanCMatteID2", 
+                        "localRender": false, 
+                        "name": "rmanCMatteID2_B_AO", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "labelColor": "No Color", 
+                  "name": "matteID2_B", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "", 
+                      "staticSelection": "", 
+                      "typeFilter": 1
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "geometric", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "mesh", 
+                "pattern": "", 
+                "staticSelection": "", 
+                "typeFilter": 0
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "absOverride": {
+                        "attrValue": {
+                          "connectable": true, 
+                          "keyable": true, 
+                          "type": "Bool", 
+                          "value": false
+                        }, 
+                        "attribute": "visibility", 
+                        "localRender": false, 
+                        "name": "light_vis_AO", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "name": "light_hide", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "", 
+                      "staticSelection": "", 
+                      "typeFilter": 1
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "lights", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }
+      ], 
+      "labelColor": "No Color", 
+      "name": "defaultSetUp_RL", 
+      "renderable": true
+    }
+  }
+]
