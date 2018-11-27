@@ -23,7 +23,7 @@
                       }
                     }
                   ], 
-                  "isolateSelected": false, 
+                  "isolateSelected": true, 
                   "name": "geo_hide", 
                   "selector": {
                     "simpleSelector": {
@@ -59,7 +59,7 @@
                       }
                     }
                   ], 
-                  "isolateSelected": false, 
+                  "isolateSelected": true, 
                   "name": "subD", 
                   "selector": {
                     "simpleSelector": {
@@ -916,27 +916,58 @@
                       }
                     }
                   ], 
-                  "isolateSelected": false, 
+                  "isolateSelected": true, 
                   "name": "all_MatteID", 
                   "selector": {
                     "simpleSelector": {
                       "customFilterValue": "", 
                       "pattern": "", 
-                      "staticSelection": "|Rolling_Teapot_Grp", 
-                      "typeFilter": 0
+                      "staticSelection": "", 
+                      "typeFilter": 1
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }, 
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "absOverride": {
+                        "attrValue": {
+                          "connectable": true, 
+                          "keyable": true, 
+                          "type": "Bool", 
+                          "value": false
+                        }, 
+                        "attribute": "visibility", 
+                        "localRender": false, 
+                        "name": "visibility", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": true, 
+                  "name": "non_model", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "", 
+                      "staticSelection": "", 
+                      "typeFilter": 1
                     }
                   }, 
                   "selfEnabled": true
                 }
               }
             ], 
-            "isolateSelected": false, 
+            "isolateSelected": true, 
             "name": "geometric", 
             "selector": {
               "simpleSelector": {
                 "customFilterValue": "mesh", 
                 "pattern": "", 
-                "staticSelection": "|Rolling_Teapot_Grp", 
+                "staticSelection": "", 
                 "typeFilter": 1
               }
             }, 
@@ -978,7 +1009,7 @@
                 }
               }
             ], 
-            "isolateSelected": false, 
+            "isolateSelected": true, 
             "name": "lights", 
             "selector": {
               "simpleSelector": {
@@ -990,11 +1021,42 @@
             }, 
             "selfEnabled": true
           }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "absOverride": {
+                  "attrValue": {
+                    "connectable": true, 
+                    "keyable": true, 
+                    "type": "Bool", 
+                    "value": true
+                  }, 
+                  "attribute": "enable", 
+                  "localRender": false, 
+                  "name": "enable", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": true, 
+            "name": "aov_on", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "rmanDisplay", 
+                "pattern": "_shadow", 
+                "staticSelection": "_MatteID0\n_MatteID1\n_MatteID2\n_MatteID3", 
+                "typeFilter": 8
+              }
+            }, 
+            "selfEnabled": true
+          }
         }
       ], 
       "labelColor": "No Color", 
-      "name": "defaultSetUp_RL", 
-      "renderable": true
+      "name": "beauty_RL", 
+      "renderable": false
     }
   }
 ]
