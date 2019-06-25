@@ -15,13 +15,17 @@ ui_path = 'C:/Users/'+username+'/Documents/maya/'+maya_version+'/scripts/ui'
 py27_lib = 'C:/Python27/Lib/site-packages'
 sys.path.append(py27_lib)
 sys.path.append(ui_path)
-sys.path.append("//mcd-one/database/assets/scripts/maya_scripts/ui")
+# sys.path.append("//mcd-one/database/assets/scripts/maya_scripts/ui")
 
 import prmanR22_tools_archiveEdit_ui
 reload(prmanR22_tools_archiveEdit_ui)
 
 import prmanR22_tools_renderSets_ui
 reload(prmanR22_tools_renderSets_ui)
+
+import prmanR22_tools_renderSetUp_ui
+reload(prmanR22_tools_renderSetUp_ui)
+
 dialog = None
 
 
@@ -40,13 +44,16 @@ class Black_UI(QtWidgets.QDialog):
         self.layout().setAlignment(QtCore.Qt.AlignTop)
         self.prmanR22_tools_archiveEdit_wid = prmanR22_tools_archiveEdit_ui()
         self.prmanR22_tools_renderSets_wid = prmanR22_tools_renderSets_ui()
+        self.prmanR22_tools_renderSetUp_wid = prmanR22_tools_renderSetUp_ui()
         main_tab_Widget = QtWidgets.QTabWidget()
         main_tab_Widget.addTab(self.prmanR22_tools_archiveEdit_wid, "Archive Editor")
         main_tab_Widget.addTab(self.prmanR22_tools_renderSets_wid, "Render Sets")
+        main_tab_Widget.addTab(self.prmanR22_tools_renderSetUp_wid, "Render SetUp")
+
         username = getpass.getuser()
         self.python_temp = 'C:/Users/'+username+'/Documents/maya/python_tools_temp'
-        self.python_temp_csv = self.python_temp+'/pixiTools.csv'
-        self.python_temp_json = self.python_temp+'/pixiTools.json'
+        self.python_temp_csv = self.python_temp+'/prmanR22_tools.csv'
+        self.python_temp_json = self.python_temp+'/prmanR22_tools.json'
         self.layout().addWidget(main_tab_Widget)
         self.save_UI_list = [
             self.prmanR22_tools_archiveEdit_wid.archiveExportPath_LE,
@@ -60,6 +67,9 @@ class Black_UI(QtWidgets.QDialog):
             self.prmanR22_tools_archiveEdit_wid.tagEditName2_LE,
             self.prmanR22_tools_archiveEdit_wid.importRlf_CB,
             self.prmanR22_tools_archiveEdit_wid.importShader_CB,
+            self.prmanR22_tools_archiveEdit_wid.sourceObj_LE,
+            self.prmanR22_tools_archiveEdit_wid.displacementObj_LE,
+            self.prmanR22_tools_archiveEdit_wid.newGrp_LE,
             self.prmanR22_tools_renderSets_wid.subDivisionOn_RB,
             self.prmanR22_tools_renderSets_wid.subDivisionOff_RB,
             self.prmanR22_tools_renderSets_wid.matteIdNum_combobox,
@@ -155,6 +165,9 @@ class prmanR22_tools_archiveEdit_ui(QtWidgets.QWidget, prmanR22_tools_archiveEdi
         self.selectSg_PB.clicked.connect(self.selectSg_PB_hit)
         self.selSgWithTag_PB.clicked.connect(self.selSgWithTag_PB_hit)
         self.tagEditDelShader_PB.clicked.connect(self.tagEditDelShader_PB_hit)
+        self.sourceObjPick_PB.clicked.connect(self.sourceObjPick_PB_hit)
+        self.displacementObjPick_PB.clicked.connect(self.displacementObjPick_PB_hit)
+        self.newGrpCreate_PB.clicked.connect(self.newGrpCreate_PB_hit)
 
     def setDefault(self):
         pass
@@ -193,19 +206,24 @@ class prmanR22_tools_archiveEdit_ui(QtWidgets.QWidget, prmanR22_tools_archiveEdi
         tag_name = self.tagEditName_LE.text()
         SG_list = self.getUsedShaderSg()
         for sg in SG_list:
-            exists = pm.attributeQuery('gpuCacheShaderTag', node=sg, ex=True)
+            exists = pm.attributeQuery('gpuCacheShaderTag', node=sg, ex=True, longName=True)
             if exists is False:
                 pm.addAttr(sg, longName='gpuCacheShaderTag', dataType='string')
             sg.setAttr('gpuCacheShaderTag', tag_name)
 
     def getUsedShaderSg(self):
         group = self.rootGroup_LE.text()
-        children_list = pm.listRelatives(group, ad=True, type='mesh')
+        children_list = pm.listRelatives(group, ad=True, children=True, type='mesh')
         SG_list = []
         for meshShape in children_list:
-            SG = pm.listConnections(meshShape, type='shadingEngine')[0]
-            if SG not in SG_list:
-                SG_list.append(SG)
+            SG = pm.listConnections(meshShape.name(), type='shadingEngine')
+            if SG != []:
+                if SG[0] != 'initialShadingGroup':
+                    print str(meshShape.name())+' SG: %s' % (SG[0])
+                    if SG[0] not in SG_list:
+                        SG_list.append(SG[0])
+        for SG in SG_list:
+            print 'SG : %s' % (SG)
         return SG_list
 
     def exportArchive_PB_hit(self):
@@ -245,7 +263,8 @@ class prmanR22_tools_archiveEdit_ui(QtWidgets.QWidget, prmanR22_tools_archiveEdi
             member_list.sort()
             member_list_b = sorted(member_list)
             for member in member_list_b:
-                shade_link_dict[sg.nodeName()].append(member.fullPathName())
+                full_name = member.longName()
+                shade_link_dict[sg.nodeName()].append(full_name)
         export_rif = {
             "Format": "RenderMan Look Data",
             "ReferenceURL": "",
@@ -288,12 +307,15 @@ class prmanR22_tools_archiveEdit_ui(QtWidgets.QWidget, prmanR22_tools_archiveEdi
 
     def exportArchive_mb(self, path, name, group):
         '''  pymel沒有.file指令, 只能用cmds'''
-        children_list = cmds.listRelatives(group, ad=True, type='mesh')
+        children_list = pm.listRelatives(group, ad=True, children=True, type='mesh')
         SG_list = []
         for meshShape in children_list:
-            SG = cmds.listConnections(meshShape, type='shadingEngine')[0]
-            if SG not in SG_list:
-                SG_list.append(SG)
+            SG = pm.listConnections(meshShape.name(), type='shadingEngine')
+            if SG != []:
+                if SG[0] != 'initialShadingGroup':
+                    print str(meshShape.name())+' SG: %s' % (SG[0])
+                    if SG[0] not in SG_list:
+                        SG_list.append(SG[0])
         cmds.select(SG_list, r=True, noExpand=True)
         cmds.file(path+"/"+name+"_shaders.mb", force=True, options="v=0;", type='mayaBinary', exportSelected=True)
 
@@ -346,6 +368,57 @@ class prmanR22_tools_archiveEdit_ui(QtWidgets.QWidget, prmanR22_tools_archiveEdi
             for child in children_list:
                 child_all_list.append(child)
                 self.allChildNode(child, child_all_list)
+
+    def sourceObjPick_PB_hit(self):
+        obj = pm.ls(sl=True, tail=True, long=True)[0]
+        self.sourceObj_LE.setText(obj.nodeName())
+
+    def displacementObjPick_PB_hit(self):
+        sel_list = pm.ls(sl=True, long=True)
+        obj_t_list = []
+        for obj in sel_list:
+            if obj.type() == "transform":
+                obj_t_list.append(obj)
+        name_list = []
+        for obj in obj_t_list:
+            name_list.append(obj.name())
+        node_text = ', '.join(name_list)
+        self.displacementObj_LE.setText(node_text)
+
+    def newGrpCreate_PB_hit(self):
+        source_obj = self.sourceObj_LE.text()
+        dis_obj_list = self.displacementObj_LE.text().split(',')
+        new_grp = self.newGrp_LE.text()
+        if pm.objExists(new_grp) is False:
+            new_grp = pm.group(em=True, name=new_grp)
+        for obj in dis_obj_list:
+            dis_node = pm.PyNode(obj)
+            source_node = pm.PyNode(source_obj)
+            dup_node = pm.duplicate(source_node)[0]
+            print dup_node
+            try:
+                pm.parent(dup_node, world=True)
+            except:
+                pass
+            tx = dis_node.getAttr('tx')
+            ty = dis_node.getAttr('ty')
+            tz = dis_node.getAttr('tz')
+            rx = dis_node.getAttr('rx')
+            ry = dis_node.getAttr('ry')
+            rz = dis_node.getAttr('rz')
+            sx = dis_node.getAttr('sx')
+            sy = dis_node.getAttr('sy')
+            sz = dis_node.getAttr('sz')
+            dup_node.setAttr('tx', tx)
+            dup_node.setAttr('ty', ty)
+            dup_node.setAttr('tz', tz)
+            dup_node.setAttr('rx', rx)
+            dup_node.setAttr('ry', ry)
+            dup_node.setAttr('rz', rz)
+            dup_node.setAttr('sx', sx)
+            dup_node.setAttr('sy', sy)
+            dup_node.setAttr('sz', sz)
+            pm.parent(dup_node, new_grp)
 
 
 class prmanR22_tools_renderSets_ui(QtWidgets.QWidget, prmanR22_tools_renderSets_ui.Ui_main_widget):
@@ -416,7 +489,8 @@ class prmanR22_tools_renderSets_ui(QtWidgets.QWidget, prmanR22_tools_renderSets_
         mesh_list = []
         obj_list = pm.ls(sl=True)
         for obj in obj_list:
-            if obj.getShape().type() == 'mesh':
+            node_type = obj.getShape().type()
+            if node_type == 'mesh' or 'RenderManArchive':
                 mesh_list.append(obj)
         return mesh_list
 
@@ -457,7 +531,7 @@ class prmanR22_tools_renderSets_ui(QtWidgets.QWidget, prmanR22_tools_renderSets_
         return attr_name, matteIdColor, attr_node
 
     def createMatteAttrNode(self):
-        for num in range(7):
+        for num in range(8):
             matteID_r = 'MatteID'+str(num)+'_red_pxrAttr'
             matteID_g = 'MatteID'+str(num)+'_green_pxrAttr'
             matteID_b = 'MatteID'+str(num)+'_blue_pxrAttr'
@@ -490,7 +564,6 @@ class prmanR22_tools_renderSets_ui(QtWidgets.QWidget, prmanR22_tools_renderSets_
             if node.type() != 'renderLayer':
                 sel_list.append(node)
         pm.select(sel_list, replace=True)
-
 
     def matteIdPxrMatteId_PB_hit(self):
         if pm.objExists('global_matteID'):
@@ -638,7 +711,188 @@ class prmanR22_tools_renderSets_ui(QtWidgets.QWidget, prmanR22_tools_renderSets_
                     node.setAttr('defaultInt', 0)
 
 
+class prmanR22_tools_renderSetUp_ui(QtWidgets.QWidget, prmanR22_tools_renderSetUp_ui.Ui_main_widget):
+    def __init__(self, parent=None):
+        super(prmanR22_tools_renderSetUp_ui, self).__init__(parent)
+        self.setupUi(self)
+        self.setDefault()
+        self.connectInterface()
+        self.info_label.setText("info bar")
+
+    def connectInterface(self):
+        # self.serverJsonPathBro_PB.clicked.connect(self.serverJsonPathBro_PB_hit)
+        self.serverJsonOPen_PB.clicked.connect(self.serverJsonOPen_PB_hit)
+        # self.localJsonFile_Bro.clicked.connect(self.localJsonFile_Bro_hit)
+        self.localJsonFile_Open.clicked.connect(self.localJsonFile_Open_hit)
+        self.addMatteIdAttr_PB.clicked.connect(self.addMatteIdAttr_PB_hit)
+        self.convertToShape_PB.clicked.connect(self.convertToShape_PB_hit)
+        self.pxrMatteIdSet_PB.clicked.connect(self.pxrMatteIdSet_PB_hit)
+        # self.getNonMeshs_PB.clicked.connect(self.getNonMeshs_PB_hit)
+        self.createMatteId_PB.clicked.connect(self.createMatteId_PB_hit)
+        self.createPnd_PB.clicked.connect(self.createPnd_PB_hit)
+        self.createBeauty_PB.clicked.connect(self.createBeauty_PB_hit)
+        pass
+
+    def setDefault(self):
+        username = getpass.getuser()
+        locale_json_path = 'C:/Users/'+username+'/Documents/maya/RSTemplates'
+        self.localJsonFile_LE.setText(locale_json_path)
+        self.localJsonFile_LE.setReadOnly(True)
+        server_json_file = '//mcd-one/database/apps/3d_apps/mayaPlugin/renderMan/renderSetUp_Json'
+        self.serverJsonPath_LE.setText(server_json_file)
+        self.serverJsonPath_LE.setReadOnly(True)
+        lightGrp_list = self.getLightGrp()
+        for lightGrp in lightGrp_list:
+            self.lightGrp_comboBox.addItem(lightGrp)
+        pass
+
+    def getLightGrp(self):
+        prman_lightType_list = [
+            'PxrRectLight',
+            'PxrDiskLight',
+            'PxrDistantLight',
+            'PxrSphereLight',
+            'PxrCylinderLight',
+            'PxrDomeLight',
+            'PxrMeshLight',
+            'PxrEnvDayLight']
+        lightGrp_list = []
+        for lightType in prman_lightType_list:
+            light_list = pm.ls(type=lightType)
+            for light in light_list:
+                lightGrp = light.getAttr('lightGroup')
+                lightGrp_list.append(lightGrp)
+        lightGrp_list = list(set(lightGrp_list))
+        return lightGrp_list
+
+    def serverJsonPathBro_PB_hit(self):
+        path = QtWidgets.QFileDialog.getExistingDirectory()
+        path = path.replace('\\', '/')
+        if path != "":
+            self.serverJsonPath_LE.setText(path)
+
+    def serverJsonOPen_PB_hit(self):
+        path = self.serverJsonPath_LE.text()
+        path = path.replace('/', '\\')
+        os.startfile(path)
+
+    def localJsonFile_Bro_hit(self):
+        path = QtWidgets.QFileDialog.getExistingDirectory()
+        path = path.replace('\\', '/')
+        if path != "":
+            self.localJsonFile_LE.setText(path)
+
+    def localJsonFile_Open_hit(self):
+        path = self.localJsonFile_LE.text()
+        path = path.replace('/', '\\')
+        os.startfile(path)
+
+    def addMatteIdAttr_PB_hit(self):
+        sel_list = pm.ls(selection=True)
+        mesh_list = []
+        for obj in sel_list:
+            obj_type = obj.getShape().type()
+            print obj_type
+            if obj_type == 'mesh':
+                mesh_list.append(obj)
+        for mesh in mesh_list:
+            mesh_t = mesh.getTransform()
+            for num in range(8):
+                attr_name = 'rmanCMatteID'+str(num)
+                exists = pm.attributeQuery(attr_name, node=mesh_t, ex=True)
+                if exists is False:
+                    pm.addAttr(mesh_t, longName=attr_name, usedAsColor=True, attributeType='float3', keyable=True)
+                    pm.addAttr(mesh_t, longName=attr_name+'R', defaultValue=1.0, attributeType='float', parent=attr_name, keyable=True)
+                    pm.addAttr(mesh_t, longName=attr_name+'G', defaultValue=1.0, attributeType='float', parent=attr_name, keyable=True)
+                    pm.addAttr(mesh_t, longName=attr_name+'B', defaultValue=1.0, attributeType='float', parent=attr_name, keyable=True)
+                    mesh_t.setAttr(attr_name, (0, 0, 0))
+
+    def convertToShape_PB_hit(self):
+        sel_list = pm.ls(sl=True)
+        shape_list = []
+        for obj in sel_list:
+            shape_list.append(obj.getShape())
+        pm.select(shape_list, replace=True)
+
+    def pxrMatteIdSet_PB_hit(self):
+        if pm.objExists('global_matteID'):
+            print 'global_matteID already exists'
+        else:
+            pm.shadingNode('PxrMatteID', at=True, n='global_matteID')
+        PxrSurface_shaders = pm.ls(type='PxrSurface')
+        PxrLayerSurface_shaders = pm.ls(type='PxrLayerSurface')
+        PxrDisney_shaders = pm.ls(type='PxrDisney')
+        for i in PxrSurface_shaders:
+            pm.connectAttr('global_matteID.resultAOV', i+'.utilityPattern[0]', f=True)
+        for i in PxrLayerSurface_shaders:
+            pm.connectAttr('global_matteID.resultAOV', i+'.utilityPattern[0]', f=True)
+        for i in PxrDisney_shaders:
+            pm.connectAttr('global_matteID.resultAOV', i+'.inputAOV', f=True)
+
+    def getNonMeshs_PB_hit(self):
+        group = pm.ls(selection=True)[0]
+        children_list = pm.listRelatives(group, children=True, allDescendents=True, type='transform')
+        mesh_list = pm.listRelatives(group, children=True, allDescendents=True, type='mesh')
+        for mesh in mesh_list:
+            mesh_t = mesh.getTransform()
+            children_list.remove(mesh_t)
+        pm.select(children_list, replace=True)
+
+    def createMatteId_PB_hit(self):
+        max_num = self.createMatteId_spinBox.value()
+        num_list = range(int(max_num)+1)
+        for num in num_list:
+            display_name = "_MatteID"+str(num)
+            display_channel_name = "MatteID"+str(num)
+            channel_source = "MatteID"+str(num)
+            self.createAovDisplay(display_name, display_channel_name, channel_source, "")
+            '''
+            display_name = "_MatteID"+str(num)
+            if pm.objExists(display_name) is False:
+                rman_display_node = pm.createNode('rmanDisplay', n=display_name)
+                rman_display_node.setAttr('enable', 0)
+                index = self.getNextFreeMultiIndex('rmanGlobals', 'displays')
+                pm.connectAttr(rman_display_node.message, 'rmanGlobals.displays[%s]' % (index))
+                channel_name = "MatteID"+str(num)
+                rman_display_channel_node = pm.createNode('rmanDisplayChannel', n=channel_name)
+                rman_display_channel_node.setAttr('channelSource', channel_name)
+                index = self.getNextFreeMultiIndex(display_name, 'displayChannels')
+                pm.connectAttr(rman_display_channel_node.message, display_name+'.displayChannels[%s]' % (index))
+            '''
+
+    def createPnd_PB_hit(self):
+        self.createAovDisplay('_Pworld', '__Pworld', '__Pworld', "")
+        self.createAovDisplay('_Nworld', '__Nworld', '__Nworld', "")
+        self.createAovDisplay('_depth', '__depth', '__depth', "")
+
+    def createAovDisplay(self, display_name, display_channel_name, channel_source, lightGrp):
+        if pm.objExists(display_name) is False:
+            rman_display_node = pm.createNode('rmanDisplay', n=display_name)
+            rman_display_node.setAttr('enable', 0)
+            index = self.getNextFreeMultiIndex('rmanGlobals', 'displays')
+            pm.connectAttr(rman_display_node.message, 'rmanGlobals.displays[%s]' % (index))
+            rman_display_channel_node = pm.createNode('rmanDisplayChannel', n=display_channel_name)
+            rman_display_channel_node.setAttr('channelSource', channel_source)
+            index = self.getNextFreeMultiIndex(display_name, 'displayChannels')
+            pm.connectAttr(rman_display_channel_node.message, display_name+'.displayChannels[%s]' % (index))
+            if lightGrp != "":
+                rman_display_channel_node.setAttr('lpeLightGroup', lightGrp)
+
+    def getNextFreeMultiIndex(self, node, attr):
+        mel = 'getNextFreeMultiIndex %s.%s 0' % (node, attr)
+        index = pm.mel.eval(mel)
+        return index
+
+    def createBeauty_PB_hit(self):
+        lightGrpName = self.lightGrp_comboBox.currentText()
+        display_name = "_Beauty_"+lightGrpName
+        display_channel_name = "Beauty_"+lightGrpName
+        channel_source = 'lpe:C[DS]*[<L.>O]'
+        self.createAovDisplay(display_name, display_channel_name, channel_source, lightGrpName)
+
+
 # ------------------------------------------------------------------------------------
+
 
 def create():
     global dialog

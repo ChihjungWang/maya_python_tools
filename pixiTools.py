@@ -871,6 +871,8 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         self.exportJsonSpine_PB.clicked.connect(self.exportJsonSpine_PB_hit)
         self.setSameKey_PB.clicked.connect(self.setSameKey_PB_hit)
         self.clearKey_PB.clicked.connect(self.clearKey_PB_hit)
+        # self.clearAllKey_PB.clicked.connect(self.clearAllKey_PB_hit)
+        self.getChildJoint_PB.clicked.connect(self.getChildJoint_PB_hit)
 
     def setDefault(self):
         time = cmds.currentUnit(q=True, time=True)
@@ -884,6 +886,9 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         max_frame = int(cmds.playbackOptions(maxTime=True, q=True))
         self.frameRangeStart_LE.setText(str(min_frame))
         self.frameRangeEnd_LE.setText(str(max_frame))
+        maya_version = pm.about(version=True)
+        mel = 'source "C:/Program Files/Autodesk/Maya%s/scripts/startup/buildSetAnimLayerMenu.mel";' % (maya_version)
+        pm.mel.eval(mel)
 
     def getSelectMeshList(self):
         mesh_list = []
@@ -1097,7 +1102,6 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         os.startfile(path)
 
     def getTextureInfo(self, meshShape):
-        print meshShape.name()
         SG = pm.listConnections(meshShape, type='shadingEngine')[0]
         shader = pm.listConnections(SG.surfaceShader, d=False, s=True, type='lambert')[0]
         file = pm.listConnections(shader.color, d=False, s=True, type='file')[0]
@@ -1369,11 +1373,10 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                 animLayer_node_checked_list.append(anim_node)
         if len(animLayer_node_checked_list) > 0:
             for animLayer_node_checked in animLayer_node_checked_list:
-                pm.animLayer(animLayer_node_checked, edit=True, mute=False)
                 for animLayer_cb in self.animLayer_cb_list:
                     animLayer_node = animLayer_cb.node
-                    if animLayer_node != animLayer_node_checked and animLayer_node != baseLayer:
-                        pm.animLayer(animLayer_node, edit=True, mute=True)
+                    pm.animLayer(animLayer_node, edit=True, mute=True, solo=False, lock=True)
+                pm.animLayer(animLayer_node_checked, edit=True, mute=False, solo=True, lock=False)
                 anim_layer_name = animLayer_node_checked.name()
                 mel = 'selectLayer("%s");' % (anim_layer_name)
                 pm.mel.eval(mel)
@@ -1479,6 +1482,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         bones_data = {}
         for bone in bone_list:
             bone_name = bone.nodeName()
+            print 'bone_name : %s' % (bone_name)
             bones_data[bone_name] = {}
             start_frame_attr = pm.attributeQuery('startFrame', node=bone, exists=True)
             if start_frame_attr is True:
@@ -1501,6 +1505,8 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                 }
                 bones_data[bone_name]['translate'].append(translate_dict)
             key_dict, sort_key_list = self.keyFrameData(bone, 'translateX')
+            # print 'translate_key_dict : %s' % (key_dict)
+            # print 'translate_sort_key_list : %s' % (sort_key_list)
             if key_dict is not None:
                 for key in sort_key_list:
                     cmds.currentTime(key)
@@ -1586,6 +1592,12 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         slot_data = {}
         for mesh in mesh_list:
             mesh_tranform = mesh.getTransform().nodeName()
+            second_joint = pm.listRelatives(mesh_tranform, p=True)[0]
+            alpha_none_zero_list = []
+            alpha_value_list = pm.keyframe(second_joint+'.alphaGain', query=True, vc=True)
+            for value in alpha_value_list:
+                if value != 0:
+                    alpha_none_zero_list.append(value)
             slot_data[mesh_tranform] = {}
             SG = pm.listConnections(mesh, type='shadingEngine')[0]
             shader = pm.listConnections(SG.surfaceShader, d=False, s=True, type='lambert')[0]
@@ -1595,43 +1607,44 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
             name = os.path.splitext(name_ext)[0]
             sequence = self.getSequence(file_image)
             use_frame_extension = file.getAttr('useFrameExtension')
-            if use_frame_extension is True:
-                '''
-                base_name = name[0:-4]
-                slot_data[mesh_tranform]['attachment'] = []
-                random_num = random.randint(0, 99)
-                cycle_num = sequence[1]
-                last_image = 'default'
-                for frame in xrange(min_frame, max_frame):
-                    slow_speed = 1
-                    slow_frame = frame / slow_speed
-                    run_frame = (slow_frame+random_num) % cycle_num+1
-                    run_frame = "%04d" % (run_frame)
-                    if last_image == 'default':
+            if len(alpha_none_zero_list) > 0:
+                if use_frame_extension is True:
+                    '''
+                    base_name = name[0:-4]
+                    slot_data[mesh_tranform]['attachment'] = []
+                    random_num = random.randint(0, 99)
+                    cycle_num = sequence[1]
+                    last_image = 'default'
+                    for frame in xrange(min_frame, max_frame):
+                        slow_speed = 1
+                        slow_frame = frame / slow_speed
+                        run_frame = (slow_frame+random_num) % cycle_num+1
+                        run_frame = "%04d" % (run_frame)
+                        if last_image == 'default':
+                            slot_dict = {}
+                            slot_dict['time'] = 0
+                            slot_dict['name'] = base_name+run_frame
+                            slot_data[mesh_tranform]['attachment'].append(slot_dict)
+                            last_image = run_frame
+                        elif run_frame != last_image:
+                            key_value = frame/fps
+                            slot_dict = {}
+                            slot_dict['time'] = round(key_value, 2)
+                            slot_dict['name'] = base_name+run_frame
+                            slot_data[mesh_tranform]['attachment'].append(slot_dict)
+                            last_image = run_frame
+                        elif run_frame == last_image:
+                            pass
+                    '''
+                    slot_data[mesh_tranform]['attachment'] = []
+                    for frame in xrange(min_frame, max_frame):
+                        cmds.currentTime(frame)
+                        image_name = self.getImageIndex(file)
                         slot_dict = {}
-                        slot_dict['time'] = 0
-                        slot_dict['name'] = base_name+run_frame
-                        slot_data[mesh_tranform]['attachment'].append(slot_dict)
-                        last_image = run_frame
-                    elif run_frame != last_image:
                         key_value = frame/fps
-                        slot_dict = {}
-                        slot_dict['time'] = round(key_value, 2)
-                        slot_dict['name'] = base_name+run_frame
+                        slot_dict['time'] = round(key_value, 4)
+                        slot_dict['name'] = image_name
                         slot_data[mesh_tranform]['attachment'].append(slot_dict)
-                        last_image = run_frame
-                    elif run_frame == last_image:
-                        pass
-                '''
-                slot_data[mesh_tranform]['attachment'] = []
-                for frame in xrange(min_frame, max_frame):
-                    cmds.currentTime(frame)
-                    image_name = self.getImageIndex(file)
-                    slot_dict = {}
-                    key_value = frame/fps
-                    slot_dict['time'] = round(key_value, 4)
-                    slot_dict['name'] = image_name
-                    slot_data[mesh_tranform]['attachment'].append(slot_dict)
 
             second_joint = pm.listRelatives(mesh.getTransform(), p=True)[0]
             start_frame_attr = pm.attributeQuery('startFrame', node=second_joint, exists=True)
@@ -1662,8 +1675,15 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                 }
                 slot_data[mesh_tranform]['color'].append(color_dict)
             key_dict, sort_key_list = self.keyFrameData(second_joint, 'alphaGain')
+            print "alphaGain_key_dict : %s" % key_dict
+            print "alphaGain_sort_key_list : %s" % sort_key_list
+            print "mesh_name : %s" % mesh_tranform
+            print "second_joint : %s" % second_joint
+
+
             if key_dict is not None:
                 for key in sort_key_list:
+                    print key
                     cmds.currentTime(key)
                     # key_value = (key-offsetValue)/fps
                     key_value = key/fps
@@ -1674,6 +1694,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                     b = second_joint.getAttr('colorGainB')
                     b = self.colorConvert16(b)
                     alpha = second_joint.getAttr('alphaGain')
+                    print "alphaGain: %s" % alpha
                     fadeGain = second_joint.getAttr('fadeGain')
                     final_alpha = alpha * fadeGain
                     alpha = self.colorConvert16(final_alpha)
@@ -1942,13 +1963,114 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                         texture_list.append(final_name)
         export_path = self.outDir_LE.text()
         for file in texture_list:
-            print file
             scr_path = os.path.dirname(file)
             scr_name = os.path.basename(file)
             export_file = export_path+'\\'+scr_name
             if os.path.exists(export_file) is True:
                 os.remove(export_file)
             copyfile(file, export_file)
+
+    def anyLayerKeyFrameData(self):
+        base_layer = self.baseAniLayer_LE.text()
+        mel = 'selectLayer("'+base_layer+'");'
+        pm.mel.eval(mel)
+        all_dict = {}
+        root_joint = self.rootJoint_LE.text()
+        root_joint = pm.PyNode(root_joint)
+        joint_list = pm.listRelatives(root_joint, allDescendents=True, type='joint')
+        joint_list.append(root_joint)
+        for obj in joint_list:
+            obj_dict = {obj: {}}
+            keyable_list = pm.listAttr(obj, keyable=True)
+            for attr in keyable_list:
+                key_count = pm.keyframe(obj, at=attr, q=True, keyframeCount=True)
+                if key_count > 0:
+                    ani_node = pm.keyframe(obj.nodeName()+'.'+attr, name=True, query=True)[0]
+                    preInfinity = pm.getAttr(ani_node+'.preInfinity')
+                    postInfinity = pm.getAttr(ani_node+'.postInfinity')
+                    keyTimes = pm.keyframe(obj.nodeName()+'.'+attr, query=True, tc=True)
+                    value = pm.keyframe(obj.nodeName()+'.'+attr, query=True, vc=True)
+                    obj_dict[obj][attr] = {}
+                    obj_dict[obj][attr]['infinity'] = [preInfinity, postInfinity]
+                    obj_dict[obj][attr]['keyTimes'] = keyTimes
+                    obj_dict[obj][attr]['values'] = value
+            if len(obj_dict[obj]) > 0:
+                all_dict.update(obj_dict)
+        return all_dict
+
+    def setKeyToAniLayer(self, all_dict):
+        ani_layer = self.setAniLayer_LE.text()
+        mel = 'selectLayer("'+ani_layer+'");'
+        pm.mel.eval(mel)
+        for obj in all_dict:
+            pm.select(obj)
+            pm.animLayer(ani_layer, edit=True, addSelectedObjects=True)
+            for attr in all_dict[obj]:
+                for index, key in enumerate(all_dict[obj][attr]['keyTimes']):
+                    # print "key: %s" % key
+                    value = all_dict[obj][attr]['values'][index]
+                    # print "value: %s" % value
+                    pm.setKeyframe(obj, animLayer=ani_layer, at=attr, e=True, time=(key), noResolve=True, value=value)
+                    ani_node = pm.keyframe(obj.nodeName()+'.'+attr, name=True, query=True)[0]
+                    pm.setAttr(ani_node+'.preInfinity', all_dict[obj][attr]['infinity'][0])
+                    pm.setAttr(ani_node+'.postInfinity', all_dict[obj][attr]['infinity'][1])
+
+    def setAniLayer_PB_hit(self):
+        all_dict = self.anyLayerKeyFrameData()
+        self.setKeyToAniLayer(all_dict)
+
+    def clearAllKey_PB_hit(self):
+        '''
+        root_joint = self.rootJoint_LE.text()
+        root_joint = pm.PyNode(root_joint)
+        joint_list = pm.listRelatives(root_joint, allDescendents=True, type='joint')
+        joint_list.append(root_joint)
+        all_ani_node = []
+        for joint in joint_list:
+            ani_node_list = pm.keyframe(joint, name=True, query=True)
+            all_ani_node = all_ani_node + ani_node_list
+        pm.undoInfo(ock=True)
+        pm.delete(all_ani_node)
+        pm.undoInfo(cck=True)
+        '''
+        pm.currentTime(1)
+        sel_list = pm.ls(selection=True)
+        get_joint_list = []
+        get_mesh_list = []
+        for obj in sel_list:
+            joint_list = pm.listRelatives(obj, allDescendents=True, type='joint')
+            mesh_list = pm.listRelatives(obj, allDescendents=True, type='mesh')
+            get_mesh_list = get_mesh_list + mesh_list
+            get_joint_list.append(obj)
+            get_joint_list = get_joint_list + joint_list
+        '''
+        all_ani_node = []
+        for joint in get_joint_list:
+            ani_node_list = pm.keyframe(joint, name=True, query=True)
+            all_ani_node = all_ani_node + ani_node_list
+        '''
+        pm.undoInfo(ock=True)
+        current_aniLayer = pm.treeView("AnimLayerTabanimLayerEditor", q=True, selectItem=True)
+        for joint in get_joint_list:
+            keyable_list = pm.listAttr(joint, keyable=True)
+            for attr in keyable_list:
+                pm.animLayer(current_aniLayer, edit=True, removeAttribute=joint.name()+'.'+attr)
+        for mesh in get_mesh_list:
+            mesh_t = mesh.getTransform()
+            second_joint = pm.listRelatives(mesh_t, fullPath=True, parent=True)
+            pm.select(second_joint)
+            pm.animLayer(current_aniLayer, edit=True, addSelectedObjects=True)
+            pm.setKeyframe(second_joint, attribute='alphaGain', t=[1, 1], v=0)
+        pm.undoInfo(cck=True)
+
+    def getChildJoint_PB_hit(self):
+        sel_list = pm.ls(selection=True)
+        get_joint_list = []
+        for obj in sel_list:
+            joint_list = pm.listRelatives(obj, allDescendents=True, type='joint')
+            get_joint_list.append(obj)
+            get_joint_list = get_joint_list + joint_list
+        pm.select(get_joint_list)
 
 
 class checkBox_class(QtWidgets.QCheckBox):
@@ -1979,8 +2101,8 @@ class pixiTools_particleEdit_ui(QtWidgets.QWidget, pixiTools_particleEdit_ui.Ui_
         self.setupUi(self)
         regx = QtCore.QRegExp("[0-9]+$")
         self.onlyInt = QtGui.QRegExpValidator(regx)
-        self.randomKeyMin_LE.setValidator(self.onlyInt)
-        self.randomKeyMax_LE.setValidator(self.onlyInt)
+        #self.randomKeyMin_LE.setValidator(self.onlyInt)
+        #self.randomKeyMax_LE.setValidator(self.onlyInt)
         self.startFrame_LE.setValidator(self.onlyInt)
         self.startFrameLoop_LE.setValidator(self.onlyInt)
         self.endFrameLoop_LE.setValidator(self.onlyInt)
@@ -2373,7 +2495,8 @@ class pixiTools_particleEdit_ui(QtWidgets.QWidget, pixiTools_particleEdit_ui.Ui_
 
     def deleteMotionPath(self, joint_node):
         node = pm.PyNode(joint_node)
-        del_attr_list = [node.tx, node.ty, node.tz, node.rx, node.ry, node.rz, node.alphaGain]
+        # del_attr_list = [node.tx, node.ty, node.tz, node.rx, node.ry, node.rz, node.alphaGain]
+        del_attr_list = [node.tx, node.ty, node.tz, node.rx, node.ry, node.rz]
         for del_attr in del_attr_list:
             attr_list = pm.listConnections(del_attr, d=False, s=True, p=True)
             if len(attr_list) > 0:
@@ -2387,10 +2510,7 @@ class pixiTools_particleEdit_ui(QtWidgets.QWidget, pixiTools_particleEdit_ui.Ui_
         node.setAttr('rotateX', 0)
         node.setAttr('rotateY', 0)
         node.setAttr('rotateZ', 0)
-        node.setAttr('alphaGain', 1)
-
-
-
+        # node.setAttr('alphaGain', 1)
 
     def curve_key_convert(self, s_frame, e_frame, keys, pow_num):
         if pow_num != 1 and pow_num != 0:
@@ -2446,7 +2566,6 @@ class pixiTools_particleEdit_ui(QtWidgets.QWidget, pixiTools_particleEdit_ui.Ui_
 
     def add_joint_PB_hit(self):
         node_list = pm.ls(sl=True)
-        print node_list
         joint_list = []
         for node in node_list:
             if node.type() == "joint":
