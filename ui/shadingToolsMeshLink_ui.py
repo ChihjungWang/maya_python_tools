@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:/Users/chihjung/Documents/maya/2017/scripts/ui/shadingToolsMeshLink.ui'
+# Form implementation generated from reading ui file 'C:/Users/chihjung/Documents/maya/2018/scripts/ui/shadingToolsMeshLink.ui'
 #
-# Created: Thu Nov 30 09:25:29 2017
+# Created: Thu Jun 27 16:42:21 2019
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_main_widget(object):
     def setupUi(self, main_widget):
         main_widget.setObjectName("main_widget")
-        main_widget.resize(800, 592)
+        main_widget.resize(800, 600)
         self.verticalLayout = QtWidgets.QVBoxLayout(main_widget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.analyzeShadingLink_PB = QtWidgets.QPushButton(main_widget)
@@ -46,13 +46,15 @@ class Ui_main_widget(object):
         self.infor_formLayout.setSpacing(2)
         self.infor_formLayout.setObjectName("infor_formLayout")
         self.objName_label = QtWidgets.QLabel(main_widget)
+        self.objName_label.setMinimumSize(QtCore.QSize(150, 0))
+        self.objName_label.setMaximumSize(QtCore.QSize(150, 16777215))
+        self.objName_label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.objName_label.setObjectName("objName_label")
         self.infor_formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.objName_label)
-        self.objName_LE = QtWidgets.QLineEdit(main_widget)
-        self.objName_LE.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.objName_LE.setObjectName("objName_LE")
-        self.infor_formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.objName_LE)
         self.cachePath_label = QtWidgets.QLabel(main_widget)
+        self.cachePath_label.setMinimumSize(QtCore.QSize(150, 0))
+        self.cachePath_label.setMaximumSize(QtCore.QSize(150, 16777215))
+        self.cachePath_label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.cachePath_label.setObjectName("cachePath_label")
         self.infor_formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.cachePath_label)
         self.cachePath_layout = QtWidgets.QHBoxLayout()
@@ -70,10 +72,36 @@ class Ui_main_widget(object):
         self.cachePath_open_PB.setObjectName("cachePath_open_PB")
         self.cachePath_layout.addWidget(self.cachePath_open_PB)
         self.infor_formLayout.setLayout(1, QtWidgets.QFormLayout.FieldRole, self.cachePath_layout)
+        self.nameSpace_label = QtWidgets.QLabel(main_widget)
+        self.nameSpace_label.setMinimumSize(QtCore.QSize(150, 0))
+        self.nameSpace_label.setMaximumSize(QtCore.QSize(150, 16777215))
+        self.nameSpace_label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.nameSpace_label.setObjectName("nameSpace_label")
+        self.infor_formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.nameSpace_label)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setSpacing(2)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.objName_LE = QtWidgets.QLineEdit(main_widget)
+        self.objName_LE.setMaximumSize(QtCore.QSize(200, 16777215))
+        self.objName_LE.setObjectName("objName_LE")
+        self.horizontalLayout.addWidget(self.objName_LE)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.infor_formLayout.setLayout(0, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setSpacing(2)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.nameSpace_LE = QtWidgets.QLineEdit(main_widget)
+        self.nameSpace_LE.setMaximumSize(QtCore.QSize(200, 16777215))
+        self.nameSpace_LE.setObjectName("nameSpace_LE")
+        self.horizontalLayout_2.addWidget(self.nameSpace_LE)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem1)
+        self.infor_formLayout.setLayout(2, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_2)
         self.verticalLayout.addLayout(self.infor_formLayout)
         self.bottom_PB_layout = QtWidgets.QGridLayout()
-        self.bottom_PB_layout.setContentsMargins(0, 0, 0, 0)
         self.bottom_PB_layout.setSpacing(2)
+        self.bottom_PB_layout.setContentsMargins(0, 0, 0, 0)
         self.bottom_PB_layout.setObjectName("bottom_PB_layout")
         self.convert_redShift_PB = QtWidgets.QPushButton(main_widget)
         self.convert_redShift_PB.setObjectName("convert_redShift_PB")
@@ -113,6 +141,7 @@ class Ui_main_widget(object):
         self.cachePath_label.setText(QtWidgets.QApplication.translate("main_widget", "data cache path : ", None, -1))
         self.cachePath_bro_PB.setText(QtWidgets.QApplication.translate("main_widget", "...", None, -1))
         self.cachePath_open_PB.setText(QtWidgets.QApplication.translate("main_widget", "open", None, -1))
+        self.nameSpace_label.setText(QtWidgets.QApplication.translate("main_widget", "reference name space : ", None, -1))
         self.convert_redShift_PB.setText(QtWidgets.QApplication.translate("main_widget", "convert to redShift", None, -1))
         self.convert_prman_PB.setText(QtWidgets.QApplication.translate("main_widget", "convert to renderman", None, -1))
         self.convert_stingray_PB.setText(QtWidgets.QApplication.translate("main_widget", "convert to stingray", None, -1))

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:/Users/chihjung/Documents/maya/2018/scripts/ui/pixiTools_export_spine_json.ui'
 #
-# Created: Mon May 27 10:08:26 2019
+# Created: Mon Jul 15 11:30:33 2019
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!

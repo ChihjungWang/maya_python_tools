@@ -480,6 +480,11 @@ class shadingToolsMeshLink_ui(QtWidgets.QWidget, shadingToolsMeshLink_ui.Ui_main
         self.checkJson_file()
 
     def linking_shaders(self, engine):
+        abc_nameSpace = self.nameSpace_LE.text()
+        if abc_nameSpace != "":
+            prefix = abc_nameSpace+":"
+        else:
+            prefix = ""
         cache_path = self.cachePath_LE.text()
         objName = self.objName_LE.text()
         name_space = objName+"_"+engine+'_SG'
@@ -488,7 +493,7 @@ class shadingToolsMeshLink_ui(QtWidgets.QWidget, shadingToolsMeshLink_ui.Ui_main
         json_file.close()
         cmds.file(cache_path+"/"+name_space+".mb", i=True, ra=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False, namespace=name_space, options="v=0;p=17;f=0", pr=True)
         for key in data:
-            cmds.sets(key, edit=True, forceElement=name_space+":"+data[key])
+            cmds.sets(prefix+key, edit=True, forceElement=name_space+":"+data[key])
 
     def checkEngine(self, treeItemList):
         total_num = len(treeItemList)

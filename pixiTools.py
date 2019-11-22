@@ -17,7 +17,7 @@ from shutil import copyfile
 
 maya_version = cmds.about(version=True)
 username = getpass.getuser()
-ui_path = 'C:/Users/'+username+'/Documents/maya/'+maya_version+'/scripts/ui'
+ui_path = 'C:/Users/' + username + '/Documents/maya/' + maya_version + '/scripts/ui'
 py27_lib = 'C:/Python27/Lib/site-packages'
 sys.path.append(py27_lib)
 sys.path.append(ui_path)
@@ -36,7 +36,7 @@ dialog = None
 class Black_UI(QtWidgets.QDialog):
     def __init__(self):
         QtWidgets.QDialog.__init__(self)
-        self.setWindowTitle('pixi tools'+' v0.5'+u' by 小黑')
+        self.setWindowTitle('pixi tools' + ' v0.5' + u' by 小黑')
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         self.setModal(False)
         self.resize(800, 600)
@@ -53,9 +53,9 @@ class Black_UI(QtWidgets.QDialog):
         main_tab_Widget.addTab(self.pixiTools_export_spine_json_wid, "Export Spine Json")
         main_tab_Widget.addTab(self.pixiTools_particleEdit_wid, "Particle Edit")
         username = getpass.getuser()
-        self.python_temp = 'C:/Users/'+username+'/Documents/maya/python_tools_temp'
-        self.python_temp_csv = self.python_temp+'/pixiTools.csv'
-        self.python_temp_json = self.python_temp+'/pixiTools.json'
+        self.python_temp = 'C:/Users/' + username + '/Documents/maya/python_tools_temp'
+        self.python_temp_csv = self.python_temp + '/pixiTools.csv'
+        self.python_temp_json = self.python_temp + '/pixiTools.json'
         self.layout().addWidget(main_tab_Widget)
         self.save_UI_list = [
             self.pixiTools_export_json_wid.objGrp_LE,
@@ -113,7 +113,7 @@ class Black_UI(QtWidgets.QDialog):
             json_dict = json.load(file)
             file.close()
             for index, widget in enumerate(self.save_UI_list):
-                key = 'wid_'+str(index)
+                key = 'wid_' + str(index)
                 if key in json_dict:
                     value = json_dict[key]['value']
                     try:
@@ -149,7 +149,7 @@ class Black_UI(QtWidgets.QDialog):
             os.mkdir(self.python_temp)
         data_dict = {}
         for index, obj in enumerate(self.save_UI_list):
-            wid_index = "wid_"+str(index)
+            wid_index = "wid_" + str(index)
             data_dict[wid_index] = {}
             data_dict[wid_index]['value'] = self.getValue(obj)
             data_dict[wid_index]['name'] = obj.objectName()
@@ -240,7 +240,7 @@ class pixiTools_export_json_ui(QtWidgets.QWidget, pixiTools_export_json_ui.Ui_ma
         totalParticle = pm.nParticle(node, query=True, count=True)
         pId_list = []
         object_list = []
-        for f in xrange(f_min, f_max+1):
+        for f in xrange(f_min, f_max + 1):
             totalParticle = pm.nParticle(node, query=True, count=True)
             if totalParticle != 0:
                 for pId in totalParticle:
@@ -525,7 +525,7 @@ class pixiTools_export_json_ui(QtWidgets.QWidget, pixiTools_export_json_ui.Ui_ma
         json_name = self.json_LE.text()
         if os.path.exists(json_path) is False:
             os.mkdir(json_path)
-        json_file = json_path+"/"+json_name+".json"
+        json_file = json_path + "/" + json_name + ".json"
         file2 = open(json_file, 'w')
         json.dump(big_data, file2, ensure_ascii=True, indent=4)
         file2.close()
@@ -904,7 +904,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         node = pm.ls(sl=True, tail=True)[0]
         basename = self.autoRename_LE.text()
         self.reNameChild(node, basename, '')
-        pm.rename(node, basename+'_joint')
+        pm.rename(node, basename + '_joint')
 
     def reNameChild(self, root_node, base_name, old_num):
         children_list = pm.listRelatives(root_node, children=True)
@@ -912,13 +912,13 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
             for num, child in enumerate(children_list):
                 node_type = child.type()
                 new_num = str(num)
-                mix_num = old_num+'_'+new_num
+                mix_num = old_num + '_' + new_num
                 try:
                     if child.getShape().type() == 'mesh':
                         node_type = 'mesh'
                 except:
                     pass
-                set_new_name = base_name+mix_num+'_'+node_type
+                set_new_name = base_name + mix_num + '_' + node_type
                 pm.rename(child, set_new_name)
                 self.reNameChild(child, base_name, mix_num)
 
@@ -929,7 +929,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
             filePath = self.getTextureInfo(meshShape)[4]
             if filePath[0:12] == 'sourceimages':
                 current_workspace = cmds.workspace(q=True, rd=True)
-                filePath = current_workspace+filePath
+                filePath = current_workspace + filePath
             im = Image.open(filePath)
             width, height = im.size
             mesh.setAttr('scaleX', lock=False)
@@ -959,29 +959,29 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
             second_joint = pm.listRelatives(mesh, fullPath=True, parent=True)[0]
             lambert_shader = pm.shadingNode('lambert', n="baseImage_lambert", asShader=True)
             shading_group = cmds.sets(name='baseImage_SG', renderable=True, noSurfaceShader=True, empty=True)
-            pm.connectAttr(lambert_shader+'.outColor', shading_group+'.surfaceShader')
+            pm.connectAttr(lambert_shader + '.outColor', shading_group + '.surfaceShader')
             pm.select(clear=True)
             pm.select(mesh)
             pm.hyperShade(assign=shading_group)
             file_node = pm.shadingNode('file', n='baseImage_file', asTexture=True, isColorManaged=True)
             texture_file = self.textureFile_LE.text()
             file_node.setAttr('fileTextureName', texture_file, type='string')
-            pm.connectAttr(file_node+'.outColor', lambert_shader+'.color')
-            pm.connectAttr(file_node+'.outTransparency', lambert_shader+'.transparency')
+            pm.connectAttr(file_node + '.outColor', lambert_shader + '.color')
+            pm.connectAttr(file_node + '.outTransparency', lambert_shader + '.transparency')
             multiplyDivide_node = pm.shadingNode('multiplyDivide', asUtility=True)
-            pm.connectAttr(second_joint+'.alphaGain', multiplyDivide_node+'.input1.input1X')
-            pm.connectAttr(second_joint+'.fadeGain', multiplyDivide_node+'.input2.input2X')
-            pm.connectAttr(multiplyDivide_node+'.output.outputX', file_node+'.alphaGain')
-            pm.connectAttr(second_joint+'.colorGainR', file_node+'.colorGainR')
-            pm.connectAttr(second_joint+'.colorGainG', file_node+'.colorGainG')
-            pm.connectAttr(second_joint+'.colorGainB', file_node+'.colorGainB')
+            pm.connectAttr(second_joint + '.alphaGain', multiplyDivide_node + '.input1.input1X')
+            pm.connectAttr(second_joint + '.fadeGain', multiplyDivide_node + '.input2.input2X')
+            pm.connectAttr(multiplyDivide_node + '.output.outputX', file_node + '.alphaGain')
+            pm.connectAttr(second_joint + '.colorGainR', file_node + '.colorGainR')
+            pm.connectAttr(second_joint + '.colorGainG', file_node + '.colorGainG')
+            pm.connectAttr(second_joint + '.colorGainB', file_node + '.colorGainB')
 
         for mesh in mesh_list:
             meshShape = mesh.getShape()
             filePath = self.getTextureInfo(meshShape)[4]
             if filePath[0:12] == 'sourceimages':
                 current_workspace = cmds.workspace(q=True, rd=True)
-                filePath = current_workspace+filePath
+                filePath = current_workspace + filePath
             im = Image.open(filePath)
             width, height = im.size
             mesh.setAttr('scaleX', lock=False)
@@ -1182,7 +1182,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         elif value <= 0:
             value_B = 0
         else:
-            value_B = int(value*255)
+            value_B = int(value * 255)
         value16bit = hex(value_B)
         value16_str = value16bit[2:len(value16bit)]
         while len(value16_str) < 2:
@@ -1193,7 +1193,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         key_list = []
         for attr in attr_list:
             attr_key_list = pm.keyframe(obj, attribute=attr, query=True, cp=False)
-            key_list = key_list+attr_key_list
+            key_list = key_list + attr_key_list
         key_list = list(set(key_list))
         key_list.sort()
         print obj.name()
@@ -1258,7 +1258,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         node_list = []
         for mesh in mesh_list:
             node_list.append(mesh.getTransform())
-        node_list = node_list+joint_list
+        node_list = node_list + joint_list
         for node in node_list:
             attr_list = pm.listAttr(node, keyable=True)
             for attr in attr_list:
@@ -1285,7 +1285,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
             b = self.colorConvert16(b)
             alpha = parent_bone.getAttr('alphaGain')
             alpha = self.colorConvert16(alpha)
-            color_data = r+g+b+alpha
+            color_data = r + g + b + alpha
             name = mesh.getTransform().nodeName()
             file_image = self.getTextureInfo(mesh)[3]
             attachment_name = os.path.splitext(file_image)[0]
@@ -1329,9 +1329,9 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
             else:
                 image_min = self.getSequence(file_image)[0]
                 image_max = self.getSequence(file_image)[1]
-                for i in xrange(image_min, image_max+1):
+                for i in xrange(image_min, image_max + 1):
                     run_frame = "%04d" % (i)
-                    attachment_name = name[0:-4]+run_frame
+                    attachment_name = name[0:-4] + run_frame
                     skin_info_dict["default"][transform_name][attachment_name] = {}
                     skin_info_dict["default"][transform_name][attachment_name]["width"] = width
                     skin_info_dict["default"][transform_name][attachment_name]["height"] = height
@@ -1391,7 +1391,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         json_name = self.json_LE.text()
         if os.path.exists(json_path) is False:
             os.mkdir(json_path)
-        json_file = json_path+"/"+json_name+"_fromMaya.json"
+        json_file = json_path + "/" + json_name + "_fromMaya.json"
         file2 = open(json_file, 'w')
         json.dump(final_dict, file2, ensure_ascii=True, indent=4)
         file2.close()
@@ -1440,19 +1440,19 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
             for num, i in enumerate(node_rename_list):
                 if transform_name == i['name']:
                     node_rename_list[num]['nodes'].append(transform)
-                    node_rename_list[num]['total'] = node_rename_list[num]['total']+1
+                    node_rename_list[num]['total'] = node_rename_list[num]['total'] + 1
 
         for i in node_rename_list:
             if i['total'] > 1:
                 for num, node in enumerate(i['nodes']):
-                    four_num = "%04d" % (num+1)
-                    new_name = i['name']+four_num
+                    four_num = "%04d" % (num + 1)
+                    new_name = i['name'] + four_num
                     pm.rename(node, new_name)
 
     def withoutNum(self, name):
         while self.is_number(name[-1:len(name)]):
             numMax = len(name)
-            name = name[0:numMax-1]
+            name = name[0:numMax - 1]
         return name
 
     def is_number(self, s):
@@ -1486,7 +1486,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
             bones_data[bone_name] = {}
             start_frame_attr = pm.attributeQuery('startFrame', node=bone, exists=True)
             if start_frame_attr is True:
-                offsetValue = bone.getAttr('startFrame')-1
+                offsetValue = bone.getAttr('startFrame') - 1
             else:
                 offsetValue = 0
             bones_data[bone_name]['translate'] = []
@@ -1497,7 +1497,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                 cmds.currentTime(1)
                 x = bone.getAttr('translateX')
                 y = bone.getAttr('translateY')
-                key_value = 1/fps
+                key_value = 1 / fps
                 translate_dict = {
                     'time': round(key_value, 4),
                     'x': round(x, 2),
@@ -1512,7 +1512,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                     cmds.currentTime(key)
                     x = bone.getAttr('translateX')
                     y = bone.getAttr('translateY')
-                    key_value = key/fps
+                    key_value = key / fps
                     translate_dict = {
                         'time': round(key_value, 4),
                         'x': round(x, 2),
@@ -1528,11 +1528,11 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                 cmds.currentTime(1)
                 angle = bone.getAttr('rotateZ')
                 if angle < 0:
-                    fix_angle = 360+(angle % 360)
+                    fix_angle = 360 + (angle % 360)
                 else:
                     fix_angle = angle % 360
 
-                key_value = 1/fps
+                key_value = 1 / fps
                 rotate_dict = {
                     'time': round(key_value, 4),
                     'angle': round(fix_angle, 2)
@@ -1544,11 +1544,11 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                     cmds.currentTime(key)
                     angle = bone.getAttr('rotateZ')
                     if angle < 0:
-                        fix_angle = 360+(angle % 360)
+                        fix_angle = 360 + (angle % 360)
                     else:
                         fix_angle = angle % 360
                     # key_value = (key-offsetValue)/fps
-                    key_value = key/fps
+                    key_value = key / fps
                     rotate_dict = {
                         'time': round(key_value, 4),
                         'angle': round(fix_angle, 2)
@@ -1564,7 +1564,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                 x = bone.getAttr('scaleX')
                 y = bone.getAttr('scaleY')
                 # key_value = (key-offsetValue)/fps
-                key_value = 1/fps
+                key_value = 1 / fps
                 scale_dict = {
                     'time': round(key_value, 4),
                     'x': round(x, 2),
@@ -1581,7 +1581,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                     x = bone.getAttr('scaleX')
                     y = bone.getAttr('scaleY')
                     # key_value = (key-offsetValue)/fps
-                    key_value = key/fps
+                    key_value = key / fps
                     scale_dict = {
                         'time': round(key_value, 4),
                         'x': round(x, 2),
@@ -1594,7 +1594,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
             mesh_tranform = mesh.getTransform().nodeName()
             second_joint = pm.listRelatives(mesh_tranform, p=True)[0]
             alpha_none_zero_list = []
-            alpha_value_list = pm.keyframe(second_joint+'.alphaGain', query=True, vc=True)
+            alpha_value_list = pm.keyframe(second_joint + '.alphaGain', query=True, vc=True)
             for value in alpha_value_list:
                 if value != 0:
                     alpha_none_zero_list.append(value)
@@ -1641,7 +1641,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                         cmds.currentTime(frame)
                         image_name = self.getImageIndex(file)
                         slot_dict = {}
-                        key_value = frame/fps
+                        key_value = frame / fps
                         slot_dict['time'] = round(key_value, 4)
                         slot_dict['name'] = image_name
                         slot_data[mesh_tranform]['attachment'].append(slot_dict)
@@ -1649,7 +1649,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
             second_joint = pm.listRelatives(mesh.getTransform(), p=True)[0]
             start_frame_attr = pm.attributeQuery('startFrame', node=second_joint, exists=True)
             if start_frame_attr is True:
-                offsetValue = second_joint.getAttr('startFrame')-1
+                offsetValue = second_joint.getAttr('startFrame')- 1
             else:
                 offsetValue = 0
             slot_data[mesh_tranform]['color'] = []
@@ -1658,7 +1658,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
             none_key = self.checkAniNoneKey(bone, ['colorGainR', 'colorGainG', 'colorGainB'])
             if none_key is True:
                 cmds.currentTime(1)
-                key_value = 1/fps
+                key_value = 1 / fps
                 r = second_joint.getAttr('colorGainR')
                 r = self.colorConvert16(r)
                 g = second_joint.getAttr('colorGainG')
@@ -1667,8 +1667,8 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                 b = self.colorConvert16(b)
                 alphaGain = second_joint.getAttr('alphaGain')
                 fadeGain = second_joint.getAttr('fadeGain')
-                alpha = self.colorConvert16(alphaGain*fadeGain)
-                color_data = r+g+b+alpha
+                alpha = self.colorConvert16(alphaGain * fadeGain)
+                color_data = r + g + b + alpha
                 color_dict = {
                     'time': round(key_value, 4),
                     'color': color_data
@@ -1680,13 +1680,12 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
             print "mesh_name : %s" % mesh_tranform
             print "second_joint : %s" % second_joint
 
-
             if key_dict is not None:
                 for key in sort_key_list:
                     print key
                     cmds.currentTime(key)
                     # key_value = (key-offsetValue)/fps
-                    key_value = key/fps
+                    key_value = key / fps
                     r = second_joint.getAttr('colorGainR')
                     r = self.colorConvert16(r)
                     g = second_joint.getAttr('colorGainG')
@@ -1698,7 +1697,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                     fadeGain = second_joint.getAttr('fadeGain')
                     final_alpha = alpha * fadeGain
                     alpha = self.colorConvert16(final_alpha)
-                    color_data = r+g+b+alpha
+                    color_data = r + g + b + alpha
                     color_dict = {
                         'time': round(key_value, 4),
                         'color': color_data
@@ -1716,7 +1715,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         key_list = []
         for attr in attr_list:
             attr_key_list = pm.keyframe(obj, attribute=attr, query=True, cp=False)
-            key_list = key_list+attr_key_list
+            key_list = key_list + attr_key_list
         if len(key_list) != 0:
             return False
         else:
@@ -1736,7 +1735,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         min_frame = int(cmds.playbackOptions(minTime=True, q=True))
         max_frame = int(cmds.playbackOptions(maxTime=True, q=True))
         if key > max_frame:
-            key = (key % max_frame)+1
+            key = (key % max_frame) + 1
         elif key == min_frame or key == max_frame:
             key = False
         return key
@@ -1850,7 +1849,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                 name = name[0:-4]
                 index = file_node.getAttr('frameExtension')
                 index = '%04d' % (index)
-                final_name = name+index
+                final_name = name + index
                 return final_name
         else:
             return name
@@ -1868,7 +1867,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         zdepth_dict = {}
         min_frame = int(cmds.playbackOptions(minTime=True, q=True))
         max_frame = int(cmds.playbackOptions(maxTime=True, q=True))
-        for frame in xrange(min_frame, max_frame+1):
+        for frame in xrange(min_frame, max_frame + 1):
             pm.currentTime(frame)
             zdepth_dict[frame] = {}
             for mesh in mesh_list:
@@ -1885,10 +1884,10 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         min_frame = int(cmds.playbackOptions(minTime=True, q=True))
         max_frame = int(cmds.playbackOptions(maxTime=True, q=True))
         drawOrder_list = []
-        for frame in xrange(min_frame, max_frame+1):
-            #zValue_list = sorted(zdepth_dict[frame].items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
+        for frame in xrange(min_frame, max_frame + 1):
+            # zValue_list = sorted(zdepth_dict[frame].items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
             zValue_list = sorted(zdepth_dict[frame].items(), lambda x, y: cmp(x[1], y[1]))
-            key_value = frame/fps
+            key_value = frame / fps
             data_dict = {}
             data_dict['offsets'] = []
             data_dict['time'] = round(key_value, 4)
@@ -1947,7 +1946,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
             file = self.getTextureInfo(mesh)[4]
             if file[0:12] == 'sourceimages':
                 current_workspace = pm.workspace(q=True, rd=True)
-                file = current_workspace+file
+                file = current_workspace + file
             if file not in texture_list:
                 texture_list.append(file)
         for file in texture_list:
@@ -1957,22 +1956,22 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                     scr_path = os.path.dirname(file)
                     nameExt = os.path.basename(file)
                     name, Ext = os.path.splitext(nameExt)
-                    index = '%04d' % (index+1)
-                    final_name = scr_path+"/"+name[0:-4]+index+Ext
+                    index = '%04d' % (index + 1)
+                    final_name = scr_path + "/" + name[0:-4] + index + Ext
                     if final_name not in texture_list:
                         texture_list.append(final_name)
         export_path = self.outDir_LE.text()
         for file in texture_list:
             scr_path = os.path.dirname(file)
             scr_name = os.path.basename(file)
-            export_file = export_path+'\\'+scr_name
+            export_file = export_path + '\\' + scr_name
             if os.path.exists(export_file) is True:
                 os.remove(export_file)
             copyfile(file, export_file)
 
     def anyLayerKeyFrameData(self):
         base_layer = self.baseAniLayer_LE.text()
-        mel = 'selectLayer("'+base_layer+'");'
+        mel = 'selectLayer("' + base_layer + '");'
         pm.mel.eval(mel)
         all_dict = {}
         root_joint = self.rootJoint_LE.text()
@@ -1985,11 +1984,11 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
             for attr in keyable_list:
                 key_count = pm.keyframe(obj, at=attr, q=True, keyframeCount=True)
                 if key_count > 0:
-                    ani_node = pm.keyframe(obj.nodeName()+'.'+attr, name=True, query=True)[0]
-                    preInfinity = pm.getAttr(ani_node+'.preInfinity')
-                    postInfinity = pm.getAttr(ani_node+'.postInfinity')
-                    keyTimes = pm.keyframe(obj.nodeName()+'.'+attr, query=True, tc=True)
-                    value = pm.keyframe(obj.nodeName()+'.'+attr, query=True, vc=True)
+                    ani_node = pm.keyframe(obj.nodeName() + '.' + attr, name=True, query=True)[0]
+                    preInfinity = pm.getAttr(ani_node + '.preInfinity')
+                    postInfinity = pm.getAttr(ani_node + '.postInfinity')
+                    keyTimes = pm.keyframe(obj.nodeName() + '.' + attr, query=True, tc=True)
+                    value = pm.keyframe(obj.nodeName() + '.' + attr, query=True, vc=True)
                     obj_dict[obj][attr] = {}
                     obj_dict[obj][attr]['infinity'] = [preInfinity, postInfinity]
                     obj_dict[obj][attr]['keyTimes'] = keyTimes
@@ -2000,7 +1999,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
 
     def setKeyToAniLayer(self, all_dict):
         ani_layer = self.setAniLayer_LE.text()
-        mel = 'selectLayer("'+ani_layer+'");'
+        mel = 'selectLayer("' + ani_layer + '");'
         pm.mel.eval(mel)
         for obj in all_dict:
             pm.select(obj)
@@ -2011,9 +2010,9 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
                     value = all_dict[obj][attr]['values'][index]
                     # print "value: %s" % value
                     pm.setKeyframe(obj, animLayer=ani_layer, at=attr, e=True, time=(key), noResolve=True, value=value)
-                    ani_node = pm.keyframe(obj.nodeName()+'.'+attr, name=True, query=True)[0]
-                    pm.setAttr(ani_node+'.preInfinity', all_dict[obj][attr]['infinity'][0])
-                    pm.setAttr(ani_node+'.postInfinity', all_dict[obj][attr]['infinity'][1])
+                    ani_node = pm.keyframe(obj.nodeName() + '.' + attr, name=True, query=True)[0]
+                    pm.setAttr(ani_node + '.preInfinity', all_dict[obj][attr]['infinity'][0])
+                    pm.setAttr(ani_node + '.postInfinity', all_dict[obj][attr]['infinity'][1])
 
     def setAniLayer_PB_hit(self):
         all_dict = self.anyLayerKeyFrameData()
@@ -2054,7 +2053,7 @@ class pixiTools_export_spine_json_ui(QtWidgets.QWidget, pixiTools_export_spine_j
         for joint in get_joint_list:
             keyable_list = pm.listAttr(joint, keyable=True)
             for attr in keyable_list:
-                pm.animLayer(current_aniLayer, edit=True, removeAttribute=joint.name()+'.'+attr)
+                pm.animLayer(current_aniLayer, edit=True, removeAttribute=joint.name() + '.' + attr)
         for mesh in get_mesh_list:
             mesh_t = mesh.getTransform()
             second_joint = pm.listRelatives(mesh_t, fullPath=True, parent=True)
@@ -2101,8 +2100,8 @@ class pixiTools_particleEdit_ui(QtWidgets.QWidget, pixiTools_particleEdit_ui.Ui_
         self.setupUi(self)
         regx = QtCore.QRegExp("[0-9]+$")
         self.onlyInt = QtGui.QRegExpValidator(regx)
-        #self.randomKeyMin_LE.setValidator(self.onlyInt)
-        #self.randomKeyMax_LE.setValidator(self.onlyInt)
+        # self.randomKeyMin_LE.setValidator(self.onlyInt)
+        # self.randomKeyMax_LE.setValidator(self.onlyInt)
         self.startFrame_LE.setValidator(self.onlyInt)
         self.startFrameLoop_LE.setValidator(self.onlyInt)
         self.endFrameLoop_LE.setValidator(self.onlyInt)
@@ -2141,6 +2140,7 @@ class pixiTools_particleEdit_ui(QtWidgets.QWidget, pixiTools_particleEdit_ui.Ui_
         self.add_joint_PB.clicked.connect(self.add_joint_PB_hit)
         self.curveAttach_PB.clicked.connect(self.curveAttach_PB_hit)
         self.resetPosition_PB.clicked.connect(self.resetPosition_PB_hit)
+        self.autoSetRotationKey_PB.clicked.connect(self.autoSetRotationKey_PB_hit)
 
     def setDefault(self):
         pass
@@ -2253,13 +2253,13 @@ class pixiTools_particleEdit_ui(QtWidgets.QWidget, pixiTools_particleEdit_ui.Ui_
                 key_list = pm.keyframe(node, attribute=attr, query=True, cp=False)
                 if len(key_list) > 0:
                     for i in range(frequency):
-                        self.loopKey(node, min_frame, max_frame, attr, i+1)
+                        self.loopKey(node, min_frame, max_frame, attr, i + 1)
         pm.undoInfo(cck=True)
 
     def loopKey(self, node, min_frame, max_frame, attr, frequency):
         pm.copyKey(node, time=(min_frame, max_frame), attribute=attr, option="keys")
-        frame_range = max_frame-min_frame+1
-        pasteKey = frame_range*frequency+1
+        frame_range = max_frame - min_frame + 1
+        pasteKey = frame_range * frequency + 1
         pm.pasteKey(node, time=(pasteKey), attribute=attr)
 
     def convertJointMode_PB_hit(self):
@@ -2459,7 +2459,7 @@ class pixiTools_particleEdit_ui(QtWidgets.QWidget, pixiTools_particleEdit_ui.Ui_
             motion_path_list.append(motion_path)
         for motion_path in motion_path_list:
             for index, key in enumerate(key_list):
-                if index != 0 and index != len(key_list)-1:
+                if index != 0 and index != len(key_list) - 1:
                     value = value_list[index]
                     pm.setKeyframe(motion_path, t=[key], at='u', v=value)
         key_all_data_dict = {}
@@ -2515,24 +2515,24 @@ class pixiTools_particleEdit_ui(QtWidgets.QWidget, pixiTools_particleEdit_ui.Ui_
     def curve_key_convert(self, s_frame, e_frame, keys, pow_num):
         if pow_num != 1 and pow_num != 0:
             log_list = []
-            for i in range(keys+1):
+            for i in range(keys + 1):
                 num = round(math.pow(pow_num, i), 3)
                 log_list.append(num)
             rate_list = []
             for i in log_list:
-                rate = (i-log_list[0])/(log_list[-1]-log_list[0])
+                rate = (i - log_list[0]) / (log_list[-1] - log_list[0])
                 rate = round(rate, 3)
                 rate_list.append(rate)
 
             key_list = []
             for rate in rate_list:
-                num = (e_frame-s_frame)*rate+s_frame
+                num = (e_frame - s_frame) * rate + s_frame
                 num = round(num, 3)
                 key_list.append(num)
 
             value_list = [0]
             for i in range(keys):
-                value = 1/float(keys)*(i+1)
+                value = 1 / float(keys) * (i + 1)
                 value = round(value, 2)
                 value_list.append(value)
             return key_list, value_list
@@ -2540,13 +2540,13 @@ class pixiTools_particleEdit_ui(QtWidgets.QWidget, pixiTools_particleEdit_ui.Ui_
         elif pow_num == 1:
             key_list = [s_frame]
             for i in range(keys):
-                key = s_frame+(e_frame-s_frame)/float(keys)*(i+1)
+                key = s_frame + (e_frame - s_frame) / float(keys) * (i + 1)
                 key = round(key, 2)
                 key_list.append(key)
 
             value_list = [0]
             for i in range(keys):
-                value = 1/float(keys)*(i+1)
+                value = 1 / float(keys) * (i + 1)
                 value = round(value, 2)
                 value_list.append(value)
             return key_list, value_list
@@ -2576,6 +2576,59 @@ class pixiTools_particleEdit_ui(QtWidgets.QWidget, pixiTools_particleEdit_ui.Ui_
         node_text = ', '.join(name_list)
         self.joint_list_LE.setText(node_text)
         to_list = node_text.split()
+
+    def autoSetRotationKey_PB_hit(self):
+        root_node = pm.ls(sl=True, tail=True)[0]
+        # root_grp = pm.PyNode(root_node)
+        joint_list = pm.listRelatives(root_node, allDescendents=True, type='joint')
+        # temp_joint_list = pm.listRelatives(root_grp, allDescendents=True, type='joint')
+        # joint_list = filter(lambda x: pm.getAttr('%s.spine_tag' % (x)) == "spine_bone", temp_joint_list)
+        set_key_dict = {}
+        for joint in joint_list:
+            count = pm.keyframe(joint, q=True, keyframeCount=True, attribute='rotateZ')
+            if count > 1:
+                obj_dict = self.setRotateKey(joint, count)
+                set_key_dict[joint] = obj_dict
+        pm.undoInfo(ock=True)
+        for obj in set_key_dict:
+            for frame in set_key_dict[obj]:
+                volue = set_key_dict[obj][frame]
+                pm.setKeyframe(obj, t=[frame, frame], at='rz', v=volue)
+        pm.undoInfo(cck=True)
+
+    def setRotateKey(self, obj, count):
+        obj_dict = {}
+        frame_list = pm.keyframe(obj, q=True, timeChange=True, attribute='rotateZ', index=(0, count))
+        volue_list = pm.keyframe(obj, q=True, valueChange=True, attribute='rotateZ', index=(0, count))
+        for i in range(count):
+            if i + 1 != count:
+                volue_1 = volue_list[i]
+                volue_2 = volue_list[i + 1]
+                distance = volue_2 - volue_1
+                if abs(distance) > 179:
+                    if distance >= 0:
+                        start_volue = 0
+                        while start_volue + 179 < distance:
+                            start_volue = start_volue + 179
+                            volue_ratio = start_volue / distance
+                            set_volue = start_volue + volue_1
+                            # print 'set_volue : %s' % (set_volue)
+                            frame_range = frame_list[i + 1] - frame_list[i]
+                            set_frame = frame_range * volue_ratio + frame_list[i]
+                            # print 'set_frame : %s' % (set_frame)
+                            obj_dict[str(set_frame)] = set_volue
+                    else:
+                        start_volue = 0
+                        while start_volue - 179 > distance:
+                            start_volue = start_volue - 179
+                            volue_ratio = start_volue / distance
+                            set_volue = start_volue - volue_1
+                            # print 'set_volue : %s' % (set_volue)
+                            frame_range = frame_list[i + 1] - frame_list[i]
+                            set_frame = frame_range * volue_ratio + frame_list[i]
+                            # print 'set_frame : %s' % (set_frame)
+                            obj_dict[set_frame] = set_volue
+        return obj_dict
 
 
 # ------------------------------------------------------------------------------------

@@ -15,7 +15,7 @@ ui_path = 'C:/Users/'+username+'/Documents/maya/'+maya_version+'/scripts/ui'
 py27_lib = 'C:/Python27/Lib/site-packages'
 sys.path.append(py27_lib)
 sys.path.append(ui_path)
-# sys.path.append("//mcd-one/database/assets/scripts/maya_scripts/ui")
+sys.path.append("//mcd-one/database/assets/scripts/maya_scripts/ui")
 
 import prmanR22_tools_archiveEdit_ui
 reload(prmanR22_tools_archiveEdit_ui)
@@ -573,12 +573,15 @@ class prmanR22_tools_renderSets_ui(QtWidgets.QWidget, prmanR22_tools_renderSets_
         PxrSurface_shaders = pm.ls(type='PxrSurface')
         PxrLayerSurface_shaders = pm.ls(type='PxrLayerSurface')
         PxrDisney_shaders = pm.ls(type='PxrDisney')
+        PxrMarschnerHair_shaders = pm.ls(type='PxrMarschnerHair')
         for i in PxrSurface_shaders:
             pm.connectAttr('global_matteID.resultAOV', i+'.utilityPattern[0]', f=True)
         for i in PxrLayerSurface_shaders:
             pm.connectAttr('global_matteID.resultAOV', i+'.utilityPattern[0]', f=True)
         for i in PxrDisney_shaders:
             pm.connectAttr('global_matteID.resultAOV', i+'.inputAOV', f=True)
+        for i in PxrMarschnerHair_shaders:
+            pm.connectAttr('global_matteID.resultAOV', i+'.utilityPattern[0]', f=True)
 
     def checkCommonAttrData(self):
         text = self.commonAttr_comboBox.currentText()
@@ -793,7 +796,7 @@ class prmanR22_tools_renderSetUp_ui(QtWidgets.QWidget, prmanR22_tools_renderSetU
         for obj in sel_list:
             obj_type = obj.getShape().type()
             print obj_type
-            if obj_type == 'mesh':
+            if obj_type == 'mesh' or obj_type == 'HairShape':
                 mesh_list.append(obj)
         for mesh in mesh_list:
             mesh_t = mesh.getTransform()
@@ -822,12 +825,23 @@ class prmanR22_tools_renderSetUp_ui(QtWidgets.QWidget, prmanR22_tools_renderSetU
         PxrSurface_shaders = pm.ls(type='PxrSurface')
         PxrLayerSurface_shaders = pm.ls(type='PxrLayerSurface')
         PxrDisney_shaders = pm.ls(type='PxrDisney')
+        PxrMarschnerHair_shaders = pm.ls(type='PxrMarschnerHair')
         for i in PxrSurface_shaders:
             pm.connectAttr('global_matteID.resultAOV', i+'.utilityPattern[0]', f=True)
         for i in PxrLayerSurface_shaders:
             pm.connectAttr('global_matteID.resultAOV', i+'.utilityPattern[0]', f=True)
         for i in PxrDisney_shaders:
             pm.connectAttr('global_matteID.resultAOV', i+'.inputAOV', f=True)
+        for i in PxrMarschnerHair_shaders:
+            try:
+                pm.connectAttr('global_matteID.resultAOV', i+'.utilityPattern[0]', f=True)
+            except:
+                pass
+            try:
+                pm.connectAttr('global_matteID.resultAOV', i+'.inputAOV', f=True)
+            except:
+                pass
+
 
     def getNonMeshs_PB_hit(self):
         group = pm.ls(selection=True)[0]

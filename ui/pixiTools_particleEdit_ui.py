@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:/Users/chihjung/Documents/maya/2018/scripts/ui/pixiTools_particleEdit.ui'
 #
-# Created: Wed Nov  7 11:19:51 2018
+# Created: Mon Jul 15 11:31:35 2019
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -409,6 +409,21 @@ class Ui_main_widget(object):
         spacerItem12 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem12)
         self.formLayout_2.setLayout(3, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_5)
+        self.label = QtWidgets.QLabel(main_widget)
+        self.label.setMinimumSize(QtCore.QSize(140, 0))
+        self.label.setMaximumSize(QtCore.QSize(140, 16777215))
+        self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label.setObjectName("label")
+        self.formLayout_2.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.label)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setSpacing(2)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.autoSetRotationKey_PB = QtWidgets.QPushButton(main_widget)
+        self.autoSetRotationKey_PB.setObjectName("autoSetRotationKey_PB")
+        self.horizontalLayout_2.addWidget(self.autoSetRotationKey_PB)
+        spacerItem13 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem13)
+        self.formLayout_2.setLayout(4, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_2)
         self.verticalLayout.addLayout(self.formLayout_2)
         self.line_3 = QtWidgets.QFrame(main_widget)
         self.line_3.setFrameShape(QtWidgets.QFrame.HLine)
@@ -515,8 +530,8 @@ class Ui_main_widget(object):
         self.instanceGrpName_layout_2.addWidget(self.resetPosition_PB)
         self.flag_commend_layout_2.setLayout(2, QtWidgets.QFormLayout.FieldRole, self.instanceGrpName_layout_2)
         self.verticalLayout.addLayout(self.flag_commend_layout_2)
-        spacerItem13 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem13)
+        spacerItem14 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem14)
 
         self.retranslateUi(main_widget)
         QtCore.QMetaObject.connectSlotsByName(main_widget)
@@ -572,6 +587,8 @@ class Ui_main_widget(object):
         self.translateConvertValue_PB.setText(QtWidgets.QApplication.translate("main_widget", "Convert Value", None, -1))
         self.scale_label.setText(QtWidgets.QApplication.translate("main_widget", "scale", None, -1))
         self.scaleConvertValue_PB.setText(QtWidgets.QApplication.translate("main_widget", "Convert Value", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("main_widget", "Other Function", None, -1))
+        self.autoSetRotationKey_PB.setText(QtWidgets.QApplication.translate("main_widget", "Auto Set Rotation Keys", None, -1))
         self.motionPathCurve_label.setText(QtWidgets.QApplication.translate("main_widget", "Motion Path Curve", None, -1))
         self.motionPathAddCurve_PB.setText(QtWidgets.QApplication.translate("main_widget", "Add Curve", None, -1))
         self.motionPathTextureSize_label.setText(QtWidgets.QApplication.translate("main_widget", "Joint List", None, -1))
