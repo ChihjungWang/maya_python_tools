@@ -12,7 +12,7 @@ import time
 import sys
 maya_version = cmds.about(version=True)
 username = getpass.getuser()
-ui_path = 'C:/Users/'+username+'/Documents/maya/'+maya_version+'/scripts/ui'
+ui_path = 'C:/Users/' + username + '/Documents/maya/' + maya_version + '/scripts/ui'
 sys.path.append(ui_path)
 sys.path.append("//mcd-one/database/assets/scripts/maya_scripts/ui")
 import prmanToolsLighting_ui
@@ -36,7 +36,7 @@ dialog = None
 class Black_UI(QtWidgets.QDialog):
     def __init__(self):
         QtWidgets.QDialog.__init__(self)
-        self.setWindowTitle('renderman tools'+' v0.5'+u' by 小黑')
+        self.setWindowTitle('renderman tools' + ' v0.5' + u' by 小黑')
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         self.setModal(False)
         self.resize(800, 600)
@@ -61,8 +61,8 @@ class Black_UI(QtWidgets.QDialog):
         main_tab_Widget.addTab(self.prmanToolsDelUnknow_wid, "deleteUnknow")
         self.layout().addWidget(main_tab_Widget)
         username = getpass.getuser()
-        self.python_temp = 'C:/Users/'+username+'/Documents/maya/python_tools_temp'
-        self.python_temp_csv = self.python_temp+'/prmanTools.csv'
+        self.python_temp = 'C:/Users/' + username + '/Documents/maya/python_tools_temp'
+        self.python_temp_csv = self.python_temp + '/prmanTools.csv'
         ribEdit_save_UI_list = [self.prmanToolsRibEdit_wid.oldRoot_LE, self.prmanToolsRibEdit_wid.newRoot_LE]
         self.save_UI_list = ribEdit_save_UI_list
         self.setFromCsv()
@@ -71,7 +71,7 @@ class Black_UI(QtWidgets.QDialog):
         self.writeCsv()
 
     def writeCsv(self):
-        if os.path.exists(self.python_temp) == False:
+        if os.path.exists(self.python_temp) is False:
             os.mkdir(self.python_temp)
         data = [['var_name', 'value']]
         for obj in self.save_UI_list:
@@ -102,7 +102,7 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
         super(prmanToolsLighting_ui, self).__init__(parent)
         self.setupUi(self)
         self.currentRL = cmds.editRenderLayerGlobals(query=True, currentRenderLayer=True)
-        self.infoBar_label.setText('Current renderLayer : '+self.currentRL)
+        self.infoBar_label.setText('Current renderLayer : ' + self.currentRL)
         self.timer_status = QtCore.QTimer()
         self.timer_status.start(400)
         self.connectInterface()
@@ -129,13 +129,13 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
         PxrDisney_shaders = pm.ls(type='PxrDisney')
 
         for i in PxrSurface_shaders:
-            pm.connectAttr('global_matteID.resultAOV', i+'.utilityPattern[0]', f=True)
+            pm.connectAttr('global_matteID.resultAOV', i + '.utilityPattern[0]', f=True)
 
         for i in PxrLayerSurface_shaders:
-            pm.connectAttr('global_matteID.resultAOV', i+'.utilityPattern[0]', f=True)
+            pm.connectAttr('global_matteID.resultAOV', i + '.utilityPattern[0]', f=True)
 
         for i in PxrDisney_shaders:
-            pm.connectAttr('global_matteID.resultAOV', i+'.inputAOV', f=True)
+            pm.connectAttr('global_matteID.resultAOV', i + '.inputAOV', f=True)
 
     def delSubD_PB_hit(self):
         u'''刪除選中的mesh的subD'''
@@ -154,8 +154,8 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
         selList = pm.selected()
         for i in selList:
             shape_name = i.getShape()
-            if pm.attributeQuery('rman__torattr___subdivScheme', node=shape_name, ex=True) == False:
-                addSubDAttrCmd = "rmanExecAEMenuCmd %s " % shape_name+'"Subdiv Scheme"'
+            if pm.attributeQuery('rman__torattr___subdivScheme', node=shape_name, ex=True) is False:
+                addSubDAttrCmd = "rmanExecAEMenuCmd %s " % shape_name + '"Subdiv Scheme"'
                 pm.mel.eval(addSubDAttrCmd)
             else:
                 pass
@@ -205,11 +205,11 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
         self.checkLights_PB_hit()
         if self.currentRL != 'defaultRenderLayer':
             for light in self.light_in_RL_list:
-                node_lightGrp = pm.getAttr(light+'.lightGroup')
+                node_lightGrp = pm.getAttr(light + '.lightGroup')
                 if node_lightGrp != '':
                     self.createOutputBeauty(node_lightGrp)
-                    pm.editRenderLayerAdjustment("beauty_"+node_lightGrp+'_output.rman__torattr___computeBehavior')
-                    pm.setAttr("beauty_"+node_lightGrp+"_output.rman__torattr___computeBehavior", 1)
+                    pm.editRenderLayerAdjustment("beauty_" + node_lightGrp + '_output.rman__torattr___computeBehavior')
+                    pm.setAttr("beauty_" + node_lightGrp + "_output.rman__torattr___computeBehavior", 1)
 
     def denoiseSettings_PB_hit(self):
         pm.setAttr("defaultRenderGlobals.outFormatControl", 0)
@@ -232,38 +232,38 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
                     self.createOutputSubsurface(node_lightGrp)
                     self.createOutputTransmissive(node_lightGrp)
                     self.createOutputDirectDiffuse(node_lightGrp)
-                    pm.editRenderLayerAdjustment("directDiffuse_"+node_lightGrp+'_output.rman__torattr___computeBehavior')
-                    pm.setAttr("directDiffuse_"+node_lightGrp+"_output.rman__torattr___computeBehavior", 1)
-                    pm.editRenderLayerAdjustment("indirectDiffuse_"+node_lightGrp+'_output.rman__torattr___computeBehavior')
-                    pm.setAttr("indirectDiffuse_"+node_lightGrp+"_output.rman__torattr___computeBehavior", 1)
-                    pm.editRenderLayerAdjustment("directSpecular_"+node_lightGrp+'_output.rman__torattr___computeBehavior')
-                    pm.setAttr("directSpecular_"+node_lightGrp+"_output.rman__torattr___computeBehavior", 1)
-                    pm.editRenderLayerAdjustment("indirectSpecular_"+node_lightGrp+'_output.rman__torattr___computeBehavior')
-                    pm.setAttr("indirectSpecular_"+node_lightGrp+"_output.rman__torattr___computeBehavior", 1)
-                    pm.editRenderLayerAdjustment("subsurface_"+node_lightGrp+'_output.rman__torattr___computeBehavior')
-                    pm.setAttr("subsurface_"+node_lightGrp+"_output.rman__torattr___computeBehavior", 1)
-                    pm.editRenderLayerAdjustment("transmissive_"+node_lightGrp+'_output.rman__torattr___computeBehavior')
-                    pm.setAttr("transmissive_"+node_lightGrp+"_output.rman__torattr___computeBehavior", 1)
+                    pm.editRenderLayerAdjustment("directDiffuse_" + node_lightGrp + '_output.rman__torattr___computeBehavior')
+                    pm.setAttr("directDiffuse_" + node_lightGrp + "_output.rman__torattr___computeBehavior", 1)
+                    pm.editRenderLayerAdjustment("indirectDiffuse_" + node_lightGrp + '_output.rman__torattr___computeBehavior')
+                    pm.setAttr("indirectDiffuse_" + node_lightGrp + "_output.rman__torattr___computeBehavior", 1)
+                    pm.editRenderLayerAdjustment("directSpecular_" + node_lightGrp + '_output.rman__torattr___computeBehavior')
+                    pm.setAttr("directSpecular_" + node_lightGrp + "_output.rman__torattr___computeBehavior", 1)
+                    pm.editRenderLayerAdjustment("indirectSpecular_" + node_lightGrp + '_output.rman__torattr___computeBehavior')
+                    pm.setAttr("indirectSpecular_" + node_lightGrp + "_output.rman__torattr___computeBehavior", 1)
+                    pm.editRenderLayerAdjustment("subsurface_" + node_lightGrp + '_output.rman__torattr___computeBehavior')
+                    pm.setAttr("subsurface_" + node_lightGrp + "_output.rman__torattr___computeBehavior", 1)
+                    pm.editRenderLayerAdjustment("transmissive_" + node_lightGrp + '_output.rman__torattr___computeBehavior')
+                    pm.setAttr("transmissive_" + node_lightGrp + "_output.rman__torattr___computeBehavior", 1)
         try:
-            cmds = 'rmanSetComputeBehavior '+'"rmanDenoiseGlobals" 0'
+            cmds = 'rmanSetComputeBehavior ' + '"rmanDenoiseGlobals" 0'
             pm.mel.eval(cmds)
         except:
             pass
 
     def createOutputDirectDiffuse(self, name):
-        name_output = 'directDiffuse_'+name+'_output'
-        create_name = 'color directDiffuse_'+name
-        if pm.objExists(name_output) == False:
-            cmds = 'rmanAddOutput rmanFinalGlobals '+'"'+create_name+'"'
+        name_output = 'directDiffuse_' + name + '_output'
+        create_name = 'color directDiffuse_' + name
+        if pm.objExists(name_output) is False:
+            cmds = 'rmanAddOutput rmanFinalGlobals ' + '"' + create_name + '"'
             output = pm.mel.eval(cmds)
-            cmds = 'rename %s ' % output+'"'+name_output+'"'
+            cmds = 'rename %s ' % output + '"' + name_output + '"'
             pm.mel.eval(cmds)
-            pm.setAttr(name_output+".rman__torattr___computeBehavior", 0)
+            pm.setAttr(name_output + ".rman__torattr___computeBehavior", 0)
             node_list = pm.listHistory("rmanFinalGlobals", pdo=True, lf=False, il=2)
             channel_node = node_list[-1].name()
             print channel_node
-            source_value = '"'+"color lpe:C<RD>[<L.'"+name+"'>O]"+'"'
-            cmds = 'rmanAddAttr '+'"'+channel_node+'" '+'"rman__riopt__DisplayChannel_source" '+source_value
+            source_value = '"' + "color lpe:C<RD>[<L.'" + name + "'>O]" + '"'
+            cmds = 'rmanAddAttr ' + '"' + channel_node + '" ' + '"rman__riopt__DisplayChannel_source" ' + source_value
             pm.mel.eval(cmds)
 
     def createOutputIndirectDiffuse(self, name):
@@ -421,7 +421,7 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
     def withoutNum(self, name):
         while self.is_number(name[-1:len(name)]):
             numMax = len(name)
-            name = name[0:numMax-1]
+            name = name[0:numMax - 1]
         return name
 
     def getTransforms(self, node):
@@ -434,7 +434,7 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
         new_RL = cmds.editRenderLayerGlobals(query=True, currentRenderLayer=True)
         if new_RL != self.currentRL:
             self.currentRL = new_RL
-            self.infoBar_label.setText('Current renderLayer : '+self.currentRL)
+            self.infoBar_label.setText('Current renderLayer : ' + self.currentRL)
             self.checkLights_PB_hit()
 
     def rmanLightList(self):
@@ -460,14 +460,14 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
     def checkLights_PB_hit(self):
 
         self.currentRL = cmds.editRenderLayerGlobals(query=True, currentRenderLayer=True)
-        self.infoBar_label.setText('Current renderLayer : '+self.currentRL)
+        self.infoBar_label.setText('Current renderLayer : ' + self.currentRL)
         self.clearLayout(self.lightCheck_layout)
 
         if self.currentRL != 'defaultRenderLayer':
             rman_light_list = self.rmanLightList()
             self.light_in_RL_list = []
             for light in rman_light_list:
-                if self.checkInRL(light) == True:
+                if self.checkInRL(light) is True:
                     self.light_in_RL_list.append(light)
 
             node_list_widget = QtWidgets.QWidget()
@@ -587,7 +587,6 @@ class prmanToolsShaderRename_ui(QtWidgets.QWidget, prmanToolsShaderRename_ui.Ui_
     def __init__(self, parent=None):
         super(prmanToolsShaderRename_ui, self).__init__(parent)
         self.setupUi(self)
-
         self.connectInterface()
 
     def connectInterface(self):
@@ -862,11 +861,15 @@ class prmanToolsTexureEdit_ui(QtWidgets.QWidget, prmanToolsTexureEdit_ui.Ui_main
         self.texture_info_treeWidget.header().resizeSection(1, 100)
         self.texture_info_treeWidget.header().resizeSection(2, 50)
         current_workspace = cmds.workspace(q=True, rd=True)
-        self.project_LE.setText(current_workspace+'sourceimages')
+        self.project_LE.setText(current_workspace + 'sourceimages')
+        self.file_type_list = {
+            'file': 'fileTextureName',
+            'PxrTexture': 'filename',
+            'PxrNormalMap': 'filename'
+        }
         self.connectInterface()
 
     def connectInterface(self):
-        print
         self.anlyse_PB.clicked.connect(self.anlyse_PB_hit)
         self.substitute_PB.clicked.connect(self.substitute_PB_hit)
         self.expanded_all_PB.clicked.connect(self.expanded_all_PB_hit)
@@ -877,26 +880,51 @@ class prmanToolsTexureEdit_ui(QtWidgets.QWidget, prmanToolsTexureEdit_ui.Ui_main
         self.texture_info_treeWidget.itemClicked.connect(self.treeWidgetItem_hit)
 
     def listDirs(self):
+        texture_node_list = []
+        file_name_list = []
+        for file_type in self.file_type_list:
+            node_list = pm.ls(type=file_type)
+            for node in node_list:
+                texture_node_list.append(node)
+                file_name = node.getAttr(self.file_type_list[file_type])
+                file_name_list.append(file_name)
+        return file_name_list, texture_node_list
+
+        '''
         pxrNodes = cmds.ls(type='PxrTexture')
         fileNodes = cmds.ls(type='file')
-        textureNode_list = pxrNodes+fileNodes
+        textureNode_list = pxrNodes + fileNodes
         fileName_list = []
         for node in textureNode_list:
             file_name = self.getFileName(node)
             fileName_list.append(file_name)
         return fileName_list, textureNode_list
+        '''
 
     def getFileName(self, node):
+        node_type = pm.nodeType(node)
+        attr = self.file_type_list[node_type]
+        node = pm.PyNode(node)
+        value = node.getAttr(attr)
+        return value
+        '''
         if cmds.nodeType(node) == 'file':
-            return cmds.getAttr(node+'.fileTextureName')
+            return cmds.getAttr(node + '.fileTextureName')
         if cmds.nodeType(node) == 'PxrTexture':
-            return cmds.getAttr(node+'.filename')
+            return cmds.getAttr(node + '.filename')
+        '''
 
     def setFileName(self, node, value):
+        node_type = pm.nodeType(node)
+        attr = self.file_type_list[node_type]
+        node = pm.PyNode(node)
+        node.setAttr(attr, value)
+        '''
         if cmds.nodeType(node) == 'file':
-            cmds.setAttr(node+'.fileTextureName', value, type='string')
+            cmds.setAttr(node + '.fileTextureName', value, type='string')
         if cmds.nodeType(node) == 'PxrTexture':
-            cmds.setAttr(node+'.filename', value, type='string')
+            cmds.setAttr(node + '.filename', value, type='string')
+        '''
 
     def fixDirs(self, path):
         pathDirs = []
@@ -908,7 +936,7 @@ class prmanToolsTexureEdit_ui(QtWidgets.QWidget, prmanToolsTexureEdit_ui.Ui_main
     def checkExists(self, node, path):
         if cmds.nodeType(node) == 'PxrTexture':
             if '_MAPID_' in path:
-                num = cmds.getAttr(node+'.atlasStyle')
+                num = cmds.getAttr(node + '.atlasStyle')
                 if num == 1:
                     path = path.replace('_MAPID_', '1001')
                 if num == 2:
@@ -918,7 +946,7 @@ class prmanToolsTexureEdit_ui(QtWidgets.QWidget, prmanToolsTexureEdit_ui.Ui_main
 
         currentProj = cmds.workspace(q=True, rd=True)
         if path[0:12] == 'sourceimages':
-            path = currentProj+path
+            path = currentProj + path
         path = path.replace('/', '\\')
         return os.path.exists(path)
 
@@ -935,11 +963,11 @@ class prmanToolsTexureEdit_ui(QtWidgets.QWidget, prmanToolsTexureEdit_ui.Ui_main
             path_dict['notExists'] = []
             for index2, path2 in enumerate(fileName_list):
                 if os.path.dirname(path2) == path:
-                    path_dict['used'].append(textureNodes[index2])
+                    path_dict['used'].append(textureNodes[index2].nodeName())
                     if self.checkExists(textureNodes[index2], path2):
-                        path_dict['exists'].append(textureNodes[index2])
+                        path_dict['exists'].append(textureNodes[index2].nodeName())
                     else:
-                        path_dict['notExists'].append(textureNodes[index2])
+                        path_dict['notExists'].append(textureNodes[index2].nodeName())
             pathGrp.append(path_dict)
         return pathGrp
 

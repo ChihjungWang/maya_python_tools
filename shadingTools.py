@@ -14,7 +14,7 @@ import time
 import sys
 maya_version = cmds.about(version=True)
 username = getpass.getuser()
-ui_path = 'C:/Users/'+username+'/Documents/maya/'+maya_version+'/scripts/ui'
+ui_path = 'C:/Users/' + username + '/Documents/maya/' + maya_version + '/scripts/ui'
 sys.path.append(ui_path)
 sys.path.append("//mcd-one/database/assets/scripts/maya_scripts/ui")
 import shadingToolsCreateNodes_ui
@@ -31,7 +31,7 @@ dialog = None
 class Black_UI(QtWidgets.QDialog):
     def __init__(self):
         QtWidgets.QDialog.__init__(self)
-        self.setWindowTitle('shading tools'+' v0.5'+u' by 小黑')
+        self.setWindowTitle('shading tools' + ' v0.5' + u' by 小黑')
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         self.setModal(False)
         self.resize(800, 600)
@@ -46,40 +46,77 @@ class Black_UI(QtWidgets.QDialog):
         main_tab_Widget.addTab(self.shadingToolsCreateNodes_wid, "createNode")
         main_tab_Widget.addTab(self.shadingToolsMeshLink_wid, "meshLink")
         username = getpass.getuser()
-        self.python_temp = 'C:/Users/'+username+'/Documents/maya/python_tools_temp'
-        self.python_temp_csv = self.python_temp+'/shadingTools.csv'
-        self.save_UI_list = [self.shadingToolsCreateNodes_wid.texturePath_LE, self.shadingToolsMeshLink_wid.cachePath_LE, self.shadingToolsMeshLink_wid.objName_LE]
+        self.python_temp = 'C:/Users/' + username + '/Documents/maya/python_tools_temp'
+        self.python_temp_csv = self.python_temp + '/pixiTools.csv'
+        self.python_temp_json = self.python_temp + '/pixiTools.json'
+        self.save_UI_list = [
+            self.shadingToolsCreateNodes_wid.texturePath_LE,
+            self.shadingToolsCreateNodes_wid.dot_CB,
+            self.shadingToolsCreateNodes_wid.udim_CB,
+            self.shadingToolsCreateNodes_wid.ext_CB,
+            self.shadingToolsMeshLink_wid.cachePath_LE,
+            self.shadingToolsMeshLink_wid.objName_LE
+        ]
         self.layout().addWidget(main_tab_Widget)
-        self.setFromCsv()
+        self.setFromJson()
 
     def closeEvent(self, event):
-        self.writeCsv()
+        self.writeJson()
 
-    def writeCsv(self):
-        if os.path.exists(self.python_temp) == False:
+    def writeJson(self):
+        if os.path.exists(self.python_temp) is False:
             os.mkdir(self.python_temp)
-        data = [['var_name', 'value']]
-        for obj in self.save_UI_list:
-            obj_info = [obj.objectName(), self.getValue(obj)]
-            data.append(obj_info)
-        file = open(self.python_temp_csv, 'w')
-        w = csv.writer(file)
-        w.writerows(data)
-        file.close()
+        data_dict = {}
+        for index, obj in enumerate(self.save_UI_list):
+            wid_index = "wid_" + str(index)
+            data_dict[wid_index] = {}
+            data_dict[wid_index]['value'] = self.getValue(obj)
+            data_dict[wid_index]['name'] = obj.objectName()
+            data_dict[wid_index]['type'] = str(type(obj))
+        file2 = open(self.python_temp_json, 'w')
+        json.dump(data_dict, file2, ensure_ascii=True, indent=4)
+        file2.close()
 
-    def setFromCsv(self):
-        if os.path.exists(self.python_temp_csv):
-            cache_value_list = []
-            file = open(self.python_temp_csv, 'r')
-            for i in csv.DictReader(file):
-                cache_value_list.append(i['value'])
+    def setFromJson(self):
+        if os.path.exists(self.python_temp_json):
+            file = open(self.python_temp_json, "r")
+            json_dict = json.load(file)
             file.close()
-            for index, value in enumerate(cache_value_list):
-                self.save_UI_list[index].setText(value)
+            for index, widget in enumerate(self.save_UI_list):
+                key = 'wid_' + str(index)
+                if key in json_dict:
+                    value = json_dict[key]['value']
+                    try:
+                        self.setValue(widget, value)
+                    except:
+                        pass
+
+    def setValue(self, widget, value):
+        wid_type = type(widget)
+        if wid_type == QtWidgets.QLineEdit:
+            widget.setText(value)
+        elif wid_type == QtWidgets.QRadioButton:
+            widget.setChecked(value)
+        elif wid_type == QtWidgets.QCheckBox:
+            widget.setChecked(value)
+        elif wid_type == QtWidgets.QButtonGroup:
+            button = widget.button(value)
+            button.setChecked(True)
+        elif wid_type == QtWidgets.QComboBox:
+            widget.setCurrentIndex(value)
 
     def getValue(self, widget):
-        if type(widget) == QtWidgets.QLineEdit:
+        widget_type = type(widget)
+        if widget_type == QtWidgets.QLineEdit:
             return widget.text()
+        elif widget_type == QtWidgets.QRadioButton:
+            return widget.isChecked()
+        elif widget_type == QtWidgets.QCheckBox:
+            return widget.isChecked()
+        elif widget_type == QtWidgets.QButtonGroup:
+            return widget.checkedId()
+        elif widget_type == QtWidgets.QComboBox:
+            return widget.currentIndex()
 
 
 class shadingToolsCreateNodes_ui(QtWidgets.QWidget, shadingToolsCreateNodes_ui.Ui_main_widget):
@@ -89,7 +126,6 @@ class shadingToolsCreateNodes_ui(QtWidgets.QWidget, shadingToolsCreateNodes_ui.U
         self.connectInterface()
         self.rman_folder = os.getenv('RMANTREE')
         self.pbr_name_list = ['BaseColor', 'Metallic', 'Roughness', 'Normal', 'Height', 'Emissive']
-        # self.texturePath_LE.setText('//mcd-one/3d_project/fox_spirit_v01/assets/character/role_vixen_b/texture/sourceimages/exr')
 
     def connectInterface(self):
         self.texturePathBro_PB.clicked.connect(self.texturePathBro_PB_hit)
@@ -98,6 +134,9 @@ class shadingToolsCreateNodes_ui(QtWidgets.QWidget, shadingToolsCreateNodes_ui.U
         self.prman_PB.clicked.connect(self.prman_PB_hit)
         self.stingray_PB.clicked.connect(self.stingray_PB_hit)
         self.redShift_PB.clicked.connect(self.redShift_PB_hit)
+        self.dot_CB.currentIndexChanged.connect(self.checkBaseName)
+        self.udim_CB.stateChanged.connect(self.checkBaseName)
+        self.ext_CB.currentIndexChanged.connect(self.checkBaseName)
 
     def texturePathBro_PB_hit(self):
         path = QtWidgets.QFileDialog.getExistingDirectory()
@@ -110,38 +149,82 @@ class shadingToolsCreateNodes_ui(QtWidgets.QWidget, shadingToolsCreateNodes_ui.U
         texture_file = texture_path.replace('/', '\\')
         os.startfile(texture_file)
 
-    def exrList(self, path):
+    def checkBaseName(self):
+        base_name = 'ex. dog_BaseColor'
+        ext = self.ext_CB.currentText()
+        if self.udim_CB.isChecked():
+            dot = self.dot_CB.currentText()
+            exText = base_name + dot + '1001' + '.' + ext
+        else:
+            exText = base_name + '.' + ext
+        self.exName_LE.setText(exText)
+
+    def imgList(self, path):
         file_list = os.listdir(path)
-        exr_list = []
+        img_list = []
         for i in file_list:
-            if os.path.isfile(path+"/"+i):
-                if os.path.splitext(i)[1] == ".exr":
-                    exr_list.append(i)
-        exr_list.sort()
-        return exr_list
+            if os.path.isfile(path + "/" + i):
+                if os.path.splitext(i)[1] == "." + self.ext_CB.currentText():
+                    img_list.append(i)
+        img_list.sort()
+        return img_list
 
     def checkTextureInfo(self):
         texture_path = self.texturePath_LE.text()
         texture_path = texture_path.replace('\\', '/')
-        exr_list = self.exrList(texture_path)
+        img_list = self.imgList(texture_path)
         textures_sets = []
-        for exr in exr_list:
-            name = os.path.splitext(exr)[0]
-            for suffix in self.pbr_name_list:
-                if name[-len(suffix):len(name)] == suffix:
-                    baseName = name[0:-len(suffix)-1]
+        ext = self.ext_CB.currentText()
+        dot = self.dot_CB.currentText()
+        if self.udim_CB.isChecked():
+            textures_sets = []
+            for img in img_list:
+                name = os.path.splitext(img)[0]
+                suffix = 'BaseColor'
+                check_name = suffix + dot + '1001'
+                file_name = name[-len(suffix) - 5:len(name)]
+                if file_name.lower() == check_name.lower():
+                    baseName = name[0:-len(suffix) - 6]
                     if baseName not in textures_sets:
                         textures_sets.append(baseName)
-        texture_info = []
-        for texture_name in textures_sets:
-            texture_dic = {}
-            texture_dic['BaseName'] = texture_name
-            for suffix in self.pbr_name_list:
-                texture_dic[suffix] = 'no'
-                if os.path.exists(texture_path+'/'+texture_name+"_"+suffix+'.exr'):
-                    texture_dic[suffix] = 'yes'
-            texture_info.append(texture_dic)
-        return texture_info
+            texture_info = []
+            for texture_name in textures_sets:
+                texture_dic = {}
+                texture_dic['BaseName'] = texture_name
+                texture_dic['UDIM'] = 'yes'
+                texture_dic['ext'] = ext
+                texture_dic['dot'] = dot
+                for suffix in self.pbr_name_list:
+                    texture_dic[suffix] = 'no'
+                    file_name = texture_name + "_" + suffix + dot + '1001' + '.' + ext
+                    if os.path.exists(texture_path + '/' + file_name):
+                        texture_dic[suffix] = 'yes'
+                texture_info.append(texture_dic)
+            return texture_info
+
+        else:
+            textures_sets = []
+            for img in img_list:
+                name = os.path.splitext(img)[0]
+                suffix = 'BaseColor'
+                if name[-len(suffix):len(name)].lower() == suffix.lower():
+                    baseName = name[0:-len(suffix) - 1]
+                    if baseName not in textures_sets:
+                        textures_sets.append(baseName)
+            texture_info = []
+            for texture_name in textures_sets:
+                texture_dic = {}
+                texture_dic['BaseName'] = texture_name
+                texture_dic['UDIM'] = 'no'
+                texture_dic['ext'] = ext
+                texture_dic['dot'] = dot
+                for suffix in self.pbr_name_list:
+                    texture_dic[suffix] = 'no'
+                    file_name = texture_name + "_" + suffix + '.' + ext
+                    if os.path.exists(texture_path + '/' + file_name):
+                        texture_dic[suffix] = 'yes'
+                texture_info.append(texture_dic)
+            return texture_info
 
     def analyzeTextureSets_PB_hit(self):
         self.clearLayout(self.scrollAreaLayout)
@@ -162,14 +245,14 @@ class shadingToolsCreateNodes_ui(QtWidgets.QWidget, shadingToolsCreateNodes_ui.U
         for index, name in enumerate(self.pbr_name_list):
             label = QtWidgets.QLabel(name)
             label.setStyleSheet("font: bold;")
-            set_info_layout.addWidget(label, 0, index+1)
+            set_info_layout.addWidget(label, 0, index + 1)
 
         for index, imgSet in enumerate(self.texture_info):
             basename_CB = checkBox_class(self, imgSet['BaseName'], index)
-            set_info_layout.addWidget(basename_CB, index+1, 0)
+            set_info_layout.addWidget(basename_CB, index + 1, 0)
             for index2, pbrName in enumerate(self.pbr_name_list):
                 label = QtWidgets.QLabel(imgSet[pbrName])
-                set_info_layout.addWidget(label, index+1, index2+1)
+                set_info_layout.addWidget(label, index + 1, index2 + 1)
         self.spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.scrollAreaLayout.addSpacerItem(self.spacerItem)
 
@@ -179,108 +262,197 @@ class shadingToolsCreateNodes_ui(QtWidgets.QWidget, shadingToolsCreateNodes_ui.U
             if child.widget() is not None:
                 child.widget().deleteLater()
             elif child.layout() is not None:
-                clearLayout(child.layout())
+                self.clearLayout(child.layout())
 
     def prman_PB_hit(self):
         for index in self.set_CB_list:
-            disney_shade = cmds.shadingNode('PxrDisney', n=self.texture_info[index]['BaseName']+'_PxrDisney', asShader=True)
+            disney_shade = cmds.shadingNode('PxrDisney', n=self.texture_info[index]['BaseName'] + '_PxrDisney', asShader=True)
             for pbrName in self.pbr_name_list:
-                self.creatPrmanNode(disney_shade, self.texture_info[index]['BaseName'], pbrName, self.texture_info[index][pbrName])
+                self.creatPrmanNode(
+                    disney_shade,
+                    self.texture_info[index]['BaseName'],
+                    pbrName,
+                    self.texture_info[index][pbrName],
+                    self.texture_info[index]['UDIM'],
+                    self.texture_info[index]['dot'],
+                    self.texture_info[index]['ext']
+                )
 
-    def creatPrmanNode(self, shader, texSet, pbrName, exist):
+    def creatPrmanNode(self, shader, texSet, pbrName, exist, udim, dot, ext):
         texture_path = self.texturePath_LE.text()
         if exist == 'yes':
             if pbrName != 'Normal' and pbrName != 'Height':
-                tex_node = cmds.shadingNode('PxrTexture', n=texSet+'_'+pbrName+'_PxrTexture', asTexture=True)
-                exr = texture_path+'/'+texSet+'_'+pbrName+'.exr'
-                tex = texture_path+'/'+texSet+'_'+pbrName+'.tex'
-                self.txmakeCMD(exr, tex)
-                cmds.setAttr(tex_node+'.filename', tex, type="string")
+                tex_node = cmds.shadingNode('PxrTexture', n=texSet + '_' + pbrName + '_PxrTexture', asTexture=True)
+                if udim == 'yes':
+                    img_name = texSet + '_' + pbrName
+                    img_list = self.udimFileList(texture_path, img_name, dot, ext)
+                    for img in img_list:
+                        path_img = texture_path + '/' + img
+                        self.txmakeCMD(path_img, udim)
+                    tex = texture_path + '/' + img_name + dot + '_MAPID_.tex'
+                    cmds.setAttr(tex_node + '.atlasStyle', 1)
+                else:
+                    img = texture_path + '/' + texSet + '_' + pbrName + '.' + ext
+                    tex = self.txmakeCMD(img, udim)
+                cmds.setAttr(tex_node + '.filename', tex, type="string")
                 if pbrName == 'BaseColor':
-                    cmds.setAttr(tex_node+'.linearize', 1)
-                    cmds.connectAttr(tex_node+'.resultRGB', shader+'.baseColor')
-                    cmds.connectAttr(tex_node+'.resultA', shader+'.presence')
+                    cmds.setAttr(tex_node + '.linearize', 1)
+                    cmds.connectAttr(tex_node + '.resultRGB', shader + '.baseColor')
+                    # cmds.connectAttr(tex_node + '.resultA', shader + '.presence')
                 elif pbrName == 'Metallic':
-                    cmds.setAttr(tex_node+'.linearize', 0)
-                    cmds.connectAttr(tex_node+'.resultR', shader+'.metallic')
+                    cmds.setAttr(tex_node + '.linearize', 0)
+                    cmds.connectAttr(tex_node + '.resultR', shader + '.metallic')
                 elif pbrName == 'Roughness':
-                    cmds.setAttr(tex_node+'.linearize', 0)
-                    cmds.connectAttr(tex_node+'.resultR', shader+'.roughness')
+                    cmds.setAttr(tex_node + '.linearize', 0)
+                    cmds.connectAttr(tex_node + '.resultR', shader + '.roughness')
                 elif pbrName == 'Emissive':
-                    cmds.setAttr(tex_node+'.linearize', 0)
-                    cmds.connectAttr(tex_node+'.resultRGB', shader+'.emitColor')
+                    cmds.setAttr(tex_node + '.linearize', 0)
+                    cmds.connectAttr(tex_node + '.resultRGB', shader + '.emitColor')
             elif pbrName == 'Normal':
-                tex_node = cmds.shadingNode('PxrNormalMap', n=texSet+'_'+pbrName+'_PxrNormalMap', asTexture=True)
-                exr = texture_path+'/'+texSet+'_'+pbrName+'.exr'
-                tex = texture_path+'/'+texSet+'_'+pbrName+'.tex'
-                self.txmakeCMD(exr, tex)
-                cmds.setAttr(tex_node+'.filename', tex, type="string")
-                cmds.connectAttr(tex_node+'.resultN', shader+'.bumpNormal')
+                tex_node = cmds.shadingNode('PxrNormalMap', n=texSet + '_' + pbrName + '_PxrNormalMap', asTexture=True)
+                if udim == 'yes':
+                    img_name = texSet + '_' + pbrName
+                    img_list = self.udimFileList(texture_path, img_name, dot, ext)
+                    for img in img_list:
+                        path_img = texture_path + '/' + img
+                        self.txmakeCMD(path_img, udim)
+                    tex = texture_path + '/' + img_name + dot + '_MAPID_.tex'
+                    cmds.setAttr(tex_node + '.atlasStyle', 1)
+                else:
+                    img = texture_path + '/' + texSet + '_' + pbrName + '.' + ext
+                    tex = self.txmakeCMD(img, udim)
+                cmds.setAttr(tex_node + '.filename', tex, type="string")
+                cmds.connectAttr(tex_node + '.resultN', shader + '.bumpNormal')
 
-        # self.pbr_name_list=['BaseColor','Metallic','Roughness','Normal','Height','Emissive']
-    def txmakeCMD(self, exr, tex):
-        txmakeCMD = "\""+self.rman_folder+"bin\\txmake.exe"+"\""+" -newer"+" -mode black"+" "+exr+" "+tex
-        subprocess.call(txmakeCMD, shell=True)
+    def udimFileList(self, texture_path, img_name, dot, ext):
+        file_list = os.listdir(texture_path)
+        texture_list = []
+        for file in file_list:
+            if os.path.splitext(file)[1] == "." + ext:
+                if file[0:len(img_name)].lower() == img_name.lower():
+                    name = os.path.splitext(file)[0]
+                    number = name[-4:]
+                    if self.is_number(number):
+                        texture_list.append(file)
+        return texture_list
+
+    def txmakeCMD(self, img, udim):
+        img = img.replace('/', '\\')
+        tex = os.path.splitext(img)[0] + '.tex'
+        if udim == 'no':
+            txmakeCMD = "\"" + self.rman_folder + "\\bin\\txmake.exe" + "\"" + " -newer" + " -mode periodic " + " " + img + " " + tex
+            subprocess.call(txmakeCMD, shell=True)
+        else:
+            txmakeCMD = "\"" + self.rman_folder + "\\bin\\txmake.exe" + "\"" + " -newer" + " -mode black" + " " + img + " " + tex
+            subprocess.call(txmakeCMD, shell=True)
+        return tex
 
     def stingray_PB_hit(self):
         for index in self.set_CB_list:
-            stingray_shade = cmds.shadingNode('StingrayPBS', n=self.texture_info[index]['BaseName']+'_StingrayPBS', asShader=True)
-            cmds.setAttr(stingray_shade+'.initgraph', True)
+            stingray_shade = cmds.shadingNode('StingrayPBS', n=self.texture_info[index]['BaseName'] + '_StingrayPBS', asShader=True)
+            cmds.setAttr(stingray_shade + '.initgraph', True)
             for pbrName in self.pbr_name_list:
-                self.creatStingrayNode(stingray_shade, self.texture_info[index]['BaseName'], pbrName, self.texture_info[index][pbrName])
+                self.creatStingrayNode(
+                    stingray_shade,
+                    self.texture_info[index]['BaseName'],
+                    pbrName,
+                    self.texture_info[index][pbrName],
+                    self.texture_info[index]['UDIM'],
+                    self.texture_info[index]['dot'],
+                    self.texture_info[index]['ext']
+                )
 
-    def creatStingrayNode(self, shader, texSet, pbrName, exist):
+    def creatStingrayNode(self, shader, texSet, pbrName, exist, udim, dot, ext):
         texture_path = self.texturePath_LE.text()
         if exist == 'yes':
             if pbrName != 'Height':
-                tex_node = cmds.shadingNode('file', n=texSet+'_'+pbrName+'_file', asTexture=True, isColorManaged=True)
-                cmds.setAttr(tex_node+'.fileTextureName', texture_path+'/'+texSet+'_'+pbrName+'.exr', type="string")
+                tex_node = cmds.shadingNode('file', n=texSet + '_' + pbrName + '_file', asTexture=True, isColorManaged=True)
+                if udim == 'yes':
+                    file = texture_path + '/' + texSet + '_' + pbrName + dot + '1001.' + ext
+                    cmds.setAttr(tex_node + '.fileTextureName', file, type="string")
+                    cmds.setAttr(tex_node + '.uvTilingMode', 3)
+                else:
+                    file = texture_path + '/' + texSet + '_' + pbrName + '.' + ext
+                    cmds.setAttr(tex_node + '.fileTextureName', file, type="string")
                 if pbrName == 'BaseColor':
-                    cmds.setAttr(shader+'.use_color_map', 1)
-                    cmds.connectAttr(tex_node+'.outColor', shader+'.TEX_color_map')
+                    cmds.setAttr(shader + '.use_color_map', 1)
+                    cmds.connectAttr(tex_node + '.outColor', shader + '.TEX_color_map')
                 elif pbrName == 'Metallic':
-                    cmds.setAttr(shader+'.use_metallic_map', 1)
-                    cmds.connectAttr(tex_node+'.outColor', shader+'.TEX_metallic_map')
+                    cmds.setAttr(shader + '.use_metallic_map', 1)
+                    cmds.connectAttr(tex_node + '.outColor', shader + '.TEX_metallic_map')
                 elif pbrName == 'Roughness':
-                    cmds.setAttr(shader+'.use_roughness_map', 1)
-                    cmds.connectAttr(tex_node+'.outColor', shader+'.TEX_roughness_map')
+                    cmds.setAttr(shader + '.use_roughness_map', 1)
+                    cmds.connectAttr(tex_node + '.outColor', shader + '.TEX_roughness_map')
                 elif pbrName == 'Normal':
-                    cmds.setAttr(shader+'.use_normal_map', 1)
-                    cmds.connectAttr(tex_node+'.outColor', shader+'.TEX_normal_map')
+                    cmds.setAttr(shader + '.use_normal_map', 1)
+                    cmds.connectAttr(tex_node + '.outColor', shader + '.TEX_normal_map')
                 elif pbrName == 'Emissive':
-                    cmds.setAttr(shader+'.use_emissive_map', 1)
-                    cmds.connectAttr(tex_node+'.outColor', shader+'.TEX_emissive_map')
+                    cmds.setAttr(shader + '.use_emissive_map', 1)
+                    cmds.connectAttr(tex_node + '.outColor', shader + '.TEX_emissive_map')
 
     def redShift_PB_hit(self):
         for index in self.set_CB_list:
-            redShift_shade = cmds.shadingNode('RedshiftMaterial', n=self.texture_info[index]['BaseName']+'_RedshiftMaterial', asShader=True)
-            cmds.setAttr(redShift_shade+'.refl_brdf', 1)
-            cmds.setAttr(redShift_shade+'.refl_fresnel_mode', 2)
+            redShift_shade = cmds.shadingNode('RedshiftMaterial', n=self.texture_info[index]['BaseName'] + '_RedshiftMaterial', asShader=True)
+            cmds.setAttr(redShift_shade + '.refl_brdf', 1)
+            cmds.setAttr(redShift_shade + '.refl_fresnel_mode', 2)
             for pbrName in self.pbr_name_list:
-                self.creatRedShiftNode(redShift_shade, self.texture_info[index]['BaseName'], pbrName, self.texture_info[index][pbrName])
+                self.creatRedShiftNode(
+                    redShift_shade,
+                    self.texture_info[index]['BaseName'],
+                    pbrName,
+                    self.texture_info[index][pbrName],
+                    self.texture_info[index]['UDIM'],
+                    self.texture_info[index]['dot'],
+                    self.texture_info[index]['ext']
+                )
 
-    def creatRedShiftNode(self, shader, texSet, pbrName, exist):
+    def creatRedShiftNode(self, shader, texSet, pbrName, exist, udim, dot, ext):
         texture_path = self.texturePath_LE.text()
         if exist == 'yes':
             if pbrName != 'Normal' and pbrName != 'Height':
-                tex_node = cmds.shadingNode('file', n=texSet+'_'+pbrName+'_file', asTexture=True, isColorManaged=True)
-                cmds.setAttr(tex_node+'.fileTextureName', texture_path+'/'+texSet+'_'+pbrName+'.exr', type="string")
+                tex_node = cmds.shadingNode('file', n=texSet + '_' + pbrName + '_file', asTexture=True, isColorManaged=True)
+                if udim == 'yes':
+                    file = texture_path + '/' + texSet + '_' + pbrName + dot + '1001.' + ext
+                    cmds.setAttr(tex_node + '.fileTextureName', file, type="string")
+                    cmds.setAttr(tex_node + '.uvTilingMode', 3)
+                else:
+                    file = texture_path + '/' + texSet + '_' + pbrName + '.' + ext
+                    cmds.setAttr(tex_node + '.fileTextureName', file, type="string")
                 if pbrName == 'BaseColor':
-                    cmds.setAttr(tex_node+'.colorSpace', 'sRGB', type='string')
-                    cmds.connectAttr(tex_node+'.outColor', shader+'.diffuse_color')
+                    cmds.setAttr(tex_node + '.colorSpace', 'sRGB', type='string')
+                    cmds.connectAttr(tex_node + '.outColor', shader + '.diffuse_color')
                 elif pbrName == 'Metallic':
-                    cmds.setAttr(tex_node+'.colorSpace', 'Raw', type='string')
-                    cmds.connectAttr(tex_node+'.outColorR', shader+'.refl_metalness')
+                    cmds.setAttr(tex_node + '.colorSpace', 'Raw', type='string')
+                    cmds.connectAttr(tex_node + '.outColorR', shader + '.refl_metalness')
                 elif pbrName == 'Roughness':
-                    cmds.setAttr(tex_node+'.colorSpace', 'Raw', type='string')
-                    cmds.connectAttr(tex_node+'.outColorR', shader+'.refl_roughness')
+                    cmds.setAttr(tex_node + '.colorSpace', 'Raw', type='string')
+                    cmds.connectAttr(tex_node + '.outColorR', shader + '.refl_roughness')
                 elif pbrName == 'Emissive':
-                    cmds.setAttr(tex_node+'.colorSpace', 'sRGB', type='string')
-                    cmds.connectAttr(tex_node+'.outColor', shader+'.emission_color')
+                    cmds.setAttr(tex_node + '.colorSpace', 'sRGB', type='string')
+                    cmds.connectAttr(tex_node + '.outColor', shader + '.emission_color')
             elif pbrName == 'Normal':
-                tex_node = cmds.shadingNode('RedshiftNormalMap', n=texSet+'_'+pbrName+'_RedshiftNormalMap', asUtility=True)
-                cmds.setAttr(tex_node+'.tex0', texture_path+'/'+texSet+'_'+pbrName+'.exr', type="string")
-                cmds.connectAttr(tex_node+'.outDisplacementVector', shader+'.bump_input')
+                tex_node = cmds.shadingNode('RedshiftNormalMap', n=texSet + '_' + pbrName + '_RedshiftNormalMap', asUtility=True)
+                if udim == 'yes':
+                    file = texture_path + '/' + texSet + '_' + pbrName + dot + '<UDIM>.' + ext
+                    cmds.setAttr(tex_node + '.tex0', file, type="string")
+                else:
+                    file = texture_path + '/' + texSet + '_' + pbrName + '.' + ext
+                    cmds.setAttr(tex_node + '.tex0', file, type="string")
+                cmds.connectAttr(tex_node + '.outDisplacementVector', shader + '.bump_input')
+
+    def is_number(self, s):
+        try:
+            float(s)
+            return True
+        except ValueError:
+            pass
+        try:
+            import unicodedata
+            unicodedata.numeric(s)
+            return True
+        except (TypeError, ValueError):
+            pass
+        return False
 
 
 class checkBox_class(QtWidgets.QCheckBox):
@@ -296,7 +468,7 @@ class checkBox_class(QtWidgets.QCheckBox):
         if self.checkState():
             if self.index not in self.parent.set_CB_list:
                 self.parent.set_CB_list.append(self.index)
-        if self.checkState() == False:
+        if self.checkState() is False:
             if self.index in self.parent.set_CB_list:
                 self.parent.set_CB_list.remove(self.index)
         self.parent.set_CB_list.sort()
@@ -361,7 +533,7 @@ class shadingToolsMeshLink_ui(QtWidgets.QWidget, shadingToolsMeshLink_ui.Ui_main
 
         for node in transform_list:
             shape = cmds.listRelatives(node, shapes=True)
-            if shape != None and cmds.nodeType(shape[0]) == 'mesh':
+            if shape is not None and cmds.nodeType(shape[0]) == 'mesh':
                 meshShape_list.append(shape[0])
         group_list = []
         group_transform = []
@@ -374,7 +546,7 @@ class shadingToolsMeshLink_ui(QtWidgets.QWidget, shadingToolsMeshLink_ui.Ui_main
         group_transform = list(set(group_transform))
         for node in group_transform:
             shape = cmds.listRelatives(node, shapes=True)
-            if shape != None and cmds.nodeType(shape[0]) == 'mesh':
+            if shape is not None and cmds.nodeType(shape[0]) == 'mesh':
                 meshShape_list.append(shape[0])
         meshShape_list = list(set(meshShape_list))
         meshShape_list.sort()
@@ -382,7 +554,7 @@ class shadingToolsMeshLink_ui(QtWidgets.QWidget, shadingToolsMeshLink_ui.Ui_main
 
     def isGroup(self, node):
         children = cmds.listRelatives(node, c=True, f=True)
-        if children == None:
+        if children is None:
             return True
         for c in children:
             if cmds.nodeType(c) != 'transform':
@@ -592,7 +764,7 @@ class pathTreeItem_class(QtWidgets.QTreeWidgetItem):
         self.shading_dict = shading_dict
         QtWidgets.QTreeWidgetItem.__init__(self)
         used_num = len(self.shading_dict['meshShape'])
-        self.setText(0, str(used_num)+" mesh(s) point to ---> "+self.shading_dict['SG'])
+        self.setText(0, str(used_num) + " mesh(s) point to ---> " + self.shading_dict['SG'])
         self.setText(1, self.checkRenderEngine(self.shading_dict['SG']))
         self.setCheckState(0, QtCore.Qt.Unchecked)
         for node in self.shading_dict['meshShape']:
@@ -604,7 +776,7 @@ class pathTreeItem_class(QtWidgets.QTreeWidgetItem):
         parent.addChild(node_item)
 
     def checkRenderEngine(self, shadingGrp):
-        shader = cmds.listConnections(shadingGrp+'.surfaceShader', d=False, s=True)[0]
+        shader = cmds.listConnections(shadingGrp + '.surfaceShader', d=False, s=True)[0]
         shader = cmds.nodeType(shader)
         redShift_list = ['RedshiftMaterial', 'RedshiftArchitectural', 'RedshiftArchitectural', 'RedshiftMaterialBlender', 'RedshiftSkin']
         renderman_list = ['PxrSurface', 'PxrDisney']
