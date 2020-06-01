@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:/Users/chihjung/Documents/maya/2018/scripts/ui/prmanToolsDelUnknow.ui'
 #
-# Created: Tue Jun 11 13:36:50 2019
+# Created: Fri Feb  7 16:56:39 2020
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
