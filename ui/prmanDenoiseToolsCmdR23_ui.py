@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:/Users/chihjung/Documents/maya/2020/scripts/ui/prmanDenoiseToolsCmdR23.ui',
-# licensing of 'C:/Users/chihjung/Documents/maya/2020/scripts/ui/prmanDenoiseToolsCmdR23.ui' applies.
+# Form implementation generated from reading ui file 'C:/Users/chihjung/Documents/maya/2023/scripts/ui/prmanDenoiseToolsCmdR23.ui',
+# licensing of 'C:/Users/chihjung/Documents/maya/2023/scripts/ui/prmanDenoiseToolsCmdR23.ui' applies.
 #
-# Created: Wed May 27 11:27:58 2020
+# Created: Thu Sep  8 12:14:43 2022
 #      by: pyside2-uic  running on PySide2 5.12.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -217,6 +217,23 @@ class Ui_main_widget(object):
         self.runCommend_layout.setSpacing(4)
         self.runCommend_layout.setContentsMargins(2, 2, 2, 2)
         self.runCommend_layout.setObjectName("runCommend_layout")
+        self.deadlineSet_CB = QtWidgets.QCheckBox(main_widget)
+        self.deadlineSet_CB.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.deadlineSet_CB.setObjectName("deadlineSet_CB")
+        self.runCommend_layout.addWidget(self.deadlineSet_CB)
+        self.mergeExr_CB = QtWidgets.QCheckBox(main_widget)
+        self.mergeExr_CB.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.mergeExr_CB.setObjectName("mergeExr_CB")
+        self.runCommend_layout.addWidget(self.mergeExr_CB)
+        self.jobName_label = QtWidgets.QLabel(main_widget)
+        self.jobName_label.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.jobName_label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.jobName_label.setObjectName("jobName_label")
+        self.runCommend_layout.addWidget(self.jobName_label)
+        self.jobName_LE = QtWidgets.QLineEdit(main_widget)
+        self.jobName_LE.setMaximumSize(QtCore.QSize(200, 16777215))
+        self.jobName_LE.setObjectName("jobName_LE")
+        self.runCommend_layout.addWidget(self.jobName_LE)
         self.rebuildBat_PB = QtWidgets.QPushButton(main_widget)
         self.rebuildBat_PB.setObjectName("rebuildBat_PB")
         self.runCommend_layout.addWidget(self.rebuildBat_PB)
@@ -259,6 +276,9 @@ class Ui_main_widget(object):
         self.json_window_PB.setText(QtWidgets.QApplication.translate("main_widget", "show json", None, -1))
         self.nOfThreads_CB.setText(QtWidgets.QApplication.translate("main_widget", "n of threads", None, -1))
         self.GPU_CB.setText(QtWidgets.QApplication.translate("main_widget", "GPU", None, -1))
+        self.deadlineSet_CB.setText(QtWidgets.QApplication.translate("main_widget", "Deadline Set", None, -1))
+        self.mergeExr_CB.setText(QtWidgets.QApplication.translate("main_widget", "Merge exr", None, -1))
+        self.jobName_label.setText(QtWidgets.QApplication.translate("main_widget", "Job Name", None, -1))
         self.rebuildBat_PB.setText(QtWidgets.QApplication.translate("main_widget", "rebuild bat", None, -1))
         self.exportBat_PB.setText(QtWidgets.QApplication.translate("main_widget", "export bat", None, -1))
 

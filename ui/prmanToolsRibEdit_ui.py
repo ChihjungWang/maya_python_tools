@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:/Users/chihjung/Documents/maya/2017/scripts/ui/prmanToolsRibEdit.ui'
+# Form implementation generated from reading ui file 'C:/Users/chihjung/Documents/maya/2023/scripts/ui/prmanToolsRibEdit.ui',
+# licensing of 'C:/Users/chihjung/Documents/maya/2023/scripts/ui/prmanToolsRibEdit.ui' applies.
 #
-# Created: Thu Nov 30 09:25:29 2017
-#      by: pyside2-uic  running on PySide2 2.0.0~alpha0
+# Created: Tue Sep 13 17:01:57 2022
+#      by: pyside2-uic  running on PySide2 5.12.5
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -21,8 +22,8 @@ class Ui_main_widget(object):
         self.substitute_label.setObjectName("substitute_label")
         self.verticalLayout.addWidget(self.substitute_label)
         self.gridLayout = QtWidgets.QGridLayout()
-        self.gridLayout.setContentsMargins(2, 2, 2, 2)
         self.gridLayout.setSpacing(4)
+        self.gridLayout.setContentsMargins(2, 2, 2, 2)
         self.gridLayout.setObjectName("gridLayout")
         self.substitute_new_label = QtWidgets.QLabel(main_widget)
         self.substitute_new_label.setObjectName("substitute_new_label")
@@ -52,21 +53,27 @@ class Ui_main_widget(object):
         self.gridLayout.addWidget(self.newRootOpen_PB, 1, 3, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout)
         self.PB_layout = QtWidgets.QGridLayout()
-        self.PB_layout.setContentsMargins(2, 2, 2, 2)
         self.PB_layout.setSpacing(4)
+        self.PB_layout.setContentsMargins(2, 2, 2, 2)
         self.PB_layout.setObjectName("PB_layout")
         self.substituteRib_PB = QtWidgets.QPushButton(main_widget)
         self.substituteRib_PB.setObjectName("substituteRib_PB")
         self.PB_layout.addWidget(self.substituteRib_PB, 0, 0, 1, 1)
         self.substituteGpuCache_PB = QtWidgets.QPushButton(main_widget)
         self.substituteGpuCache_PB.setObjectName("substituteGpuCache_PB")
-        self.PB_layout.addWidget(self.substituteGpuCache_PB, 0, 1, 1, 1)
+        self.PB_layout.addWidget(self.substituteGpuCache_PB, 0, 2, 1, 1)
         self.ribShapeRename_PB = QtWidgets.QPushButton(main_widget)
         self.ribShapeRename_PB.setObjectName("ribShapeRename_PB")
         self.PB_layout.addWidget(self.ribShapeRename_PB, 1, 0, 1, 1)
+        self.substituteRlf_PB = QtWidgets.QPushButton(main_widget)
+        self.substituteRlf_PB.setObjectName("substituteRlf_PB")
+        self.PB_layout.addWidget(self.substituteRlf_PB, 0, 1, 1, 1)
         self.ribFrameFix_PB = QtWidgets.QPushButton(main_widget)
         self.ribFrameFix_PB.setObjectName("ribFrameFix_PB")
         self.PB_layout.addWidget(self.ribFrameFix_PB, 1, 1, 1, 1)
+        self.rlfRefill_PB = QtWidgets.QPushButton(main_widget)
+        self.rlfRefill_PB.setObjectName("rlfRefill_PB")
+        self.PB_layout.addWidget(self.rlfRefill_PB, 1, 2, 1, 1)
         self.verticalLayout.addLayout(self.PB_layout)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
@@ -86,5 +93,7 @@ class Ui_main_widget(object):
         self.substituteRib_PB.setText(QtWidgets.QApplication.translate("main_widget", "substitute Rib", None, -1))
         self.substituteGpuCache_PB.setText(QtWidgets.QApplication.translate("main_widget", "substitute gpuCache", None, -1))
         self.ribShapeRename_PB.setText(QtWidgets.QApplication.translate("main_widget", "ribShape rename", None, -1))
+        self.substituteRlf_PB.setText(QtWidgets.QApplication.translate("main_widget", "substitute Rif", None, -1))
         self.ribFrameFix_PB.setText(QtWidgets.QApplication.translate("main_widget", "rib frame fix", None, -1))
+        self.rlfRefill_PB.setText(QtWidgets.QApplication.translate("main_widget", "Rlf refill", None, -1))
 

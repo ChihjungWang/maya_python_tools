@@ -9,28 +9,43 @@ import os
 import getpass
 import sys
 import pprint
+import importlib
+import random as rand
+
+
 maya_version = cmds.about(version=True)
 username = getpass.getuser()
 ui_path = 'C:/Users/' + username + '/Documents/maya/' + maya_version + '/scripts/ui'
 py27_lib = 'C:/Python27/Lib/site-packages'
 sys.path.append(py27_lib)
 sys.path.append(ui_path)
-sys.path.append("//mcd-one/database/assets/scripts/maya_scripts/ui")
+if maya_version == '2023':
+    sys.path.append("//mcd-one/database/assets/scripts/maya_scripts_py3/ui")
+else:
+    sys.path.append("//mcd-one/database/assets/scripts/maya_scripts/ui")
+
 
 import prmanR22_tools_archiveEdit_ui
-reload(prmanR22_tools_archiveEdit_ui)
+importlib.reload(prmanR22_tools_archiveEdit_ui)
 
 import prmanR22_tools_renderSets_ui
-reload(prmanR22_tools_renderSets_ui)
+importlib.reload(prmanR22_tools_renderSets_ui)
 
 import prmanR22_tools_renderSetUp_ui
-reload(prmanR22_tools_renderSetUp_ui)
+importlib.reload(prmanR22_tools_renderSetUp_ui)
 
-import prmanR22_tools_objReplacement_ui
-reload(prmanR22_tools_objReplacement_ui)
+
+import prmanR22_tools_objEdit_ui
+importlib.reload(prmanR22_tools_objEdit_ui)
+
+import prmanR22_tools_vdbEdit_ui
+importlib.reload(prmanR22_tools_vdbEdit_ui)
+
 
 import prmanR22_tools_rlfShaderEdit_ui
-reload(prmanR22_tools_rlfShaderEdit_ui)
+importlib.reload(prmanR22_tools_rlfShaderEdit_ui)
+
+
 
 
 dialog = None
@@ -52,13 +67,15 @@ class Black_UI(QtWidgets.QDialog):
         self.prmanR22_tools_archiveEdit_wid = prmanR22_tools_archiveEdit_ui()
         self.prmanR22_tools_renderSets_wid = prmanR22_tools_renderSets_ui()
         self.prmanR22_tools_renderSetUp_wid = prmanR22_tools_renderSetUp_ui()
-        self.prmanR22_tools_objReplacement_wid = prmanR22_tools_objReplacement_ui()
+        self.prmanR22_tools_objEdit_wid = prmanR22_tools_objEdit_ui()
+        self.prmanR22_tools_vdbEdit_wid = prmanR22_tools_vdbEdit_ui()
         self.prmanR22_tools_rlfShaderEdit_wid = prmanR22_tools_rlfShaderEdit_ui()
         main_tab_Widget = QtWidgets.QTabWidget()
         main_tab_Widget.addTab(self.prmanR22_tools_archiveEdit_wid, "Archive Editor")
         main_tab_Widget.addTab(self.prmanR22_tools_renderSets_wid, "Render Sets")
         main_tab_Widget.addTab(self.prmanR22_tools_renderSetUp_wid, "Render SetUp")
-        main_tab_Widget.addTab(self.prmanR22_tools_objReplacement_wid, "Obj Replacement")
+        main_tab_Widget.addTab(self.prmanR22_tools_objEdit_wid, "Obj Editor")
+        main_tab_Widget.addTab(self.prmanR22_tools_vdbEdit_wid, "VDB Editor")
         main_tab_Widget.addTab(self.prmanR22_tools_rlfShaderEdit_wid, "Rif shader Editor")
         username = getpass.getuser()
         self.python_temp = 'C:/Users/' + username + '/Documents/maya/python_tools_temp'
@@ -86,11 +103,29 @@ class Black_UI(QtWidgets.QDialog):
             self.prmanR22_tools_renderSets_wid.commonAttr_comboBox,
             self.prmanR22_tools_renderSets_wid.commonAttrOn_RP,
             self.prmanR22_tools_renderSets_wid.commonAttrOn_RP,
-            self.prmanR22_tools_objReplacement_wid.targetGetObj_LE,
-            self.prmanR22_tools_objReplacement_wid.replaceGetObj_LE,
-            self.prmanR22_tools_objReplacement_wid.targetVdb_LE,
-            self.prmanR22_tools_objReplacement_wid.vdbFile_LE,
-            self.prmanR22_tools_objReplacement_wid.vdbSg_LE
+            self.prmanR22_tools_objEdit_wid.targetGetObj_LE,
+            self.prmanR22_tools_objEdit_wid.replaceGetObj_LE,
+            self.prmanR22_tools_objEdit_wid.dupInputConnections_RB,
+            self.prmanR22_tools_objEdit_wid.translateMin_LE,
+            self.prmanR22_tools_objEdit_wid.translateMax_LE,
+            self.prmanR22_tools_objEdit_wid.TX_CB,
+            self.prmanR22_tools_objEdit_wid.TY_CB,
+            self.prmanR22_tools_objEdit_wid.TZ_CB,
+            self.prmanR22_tools_objEdit_wid.rotateMin_LE,
+            self.prmanR22_tools_objEdit_wid.rotateMax_LE,
+            self.prmanR22_tools_objEdit_wid.RX_CB,
+            self.prmanR22_tools_objEdit_wid.RY_CB,
+            self.prmanR22_tools_objEdit_wid.RZ_CB,
+            self.prmanR22_tools_objEdit_wid.scaleMin_LE,
+            self.prmanR22_tools_objEdit_wid.scaleMax_LE,
+            self.prmanR22_tools_vdbEdit_wid.targetVdb_LE,
+            self.prmanR22_tools_vdbEdit_wid.vdbFile_LE,
+            self.prmanR22_tools_vdbEdit_wid.vdbSg_LE,
+            self.prmanR22_tools_vdbEdit_wid.renderAs_comboBox,
+            self.prmanR22_tools_vdbEdit_wid.leafNode_CB,
+            self.prmanR22_tools_vdbEdit_wid.activeVoxels_CB,
+            self.prmanR22_tools_vdbEdit_wid.surface_CB,
+
         ]
         self.setFromJson()
 
@@ -178,6 +213,13 @@ class prmanR22_tools_archiveEdit_ui(QtWidgets.QWidget, prmanR22_tools_archiveEdi
         self.selSgWithTag_PB.clicked.connect(self.selSgWithTag_PB_hit)
         self.tagEditDelShader_PB.clicked.connect(self.tagEditDelShader_PB_hit)
         self.importArchive_PB.clicked.connect(self.importArchive_PB_hit)
+        self.delArnold_PB.clicked.connect(self.delArnold_PB_hit)
+        self.delRenderSetUp_PB.clicked.connect(self.delRenderSetUp_PB_hit)
+        self.delAov_PB.clicked.connect(self.delAov_PB_hit)
+        self.getSgWithRlf_PB.clicked.connect(self.getSgWithRlf_PB_hit)
+        self.setAniForAbc_PB.clicked.connect(self.setAniForAbc_PB_hit)
+        self.delRenderLayer_PB.clicked.connect(self.delRenderLayer_PB_hit)
+        self.copyUvRigged_PB.clicked.connect(self.copyUvRigged_PB_hit)
 
     def setDefault(self):
         pass
@@ -239,11 +281,11 @@ class prmanR22_tools_archiveEdit_ui(QtWidgets.QWidget, prmanR22_tools_archiveEdi
             SG = pm.listConnections(meshShape.name(), type='shadingEngine')
             if SG != []:
                 if SG[0] != 'initialShadingGroup':
-                    print str(meshShape.name()) + ' SG: %s' % (SG[0])
+                    print(str(meshShape.name()) + ' SG: %s' % (SG[0]))
                     if SG[0] not in SG_list:
                         SG_list.append(SG[0])
         for SG in SG_list:
-            print 'SG : %s' % (SG)
+            print('SG : %s' % (SG))
         return SG_list
 
     def groupFix(self, group):
@@ -422,11 +464,12 @@ class prmanR22_tools_archiveEdit_ui(QtWidgets.QWidget, prmanR22_tools_archiveEdi
             cmds.select(SG_list, r=True, noExpand=True)
             cmds.file(path + "/" + name + "_shaders.mb", force=True, options="v=0;", type='mayaBinary', exportSelected=True)
         else:
-            print "error : some shaders wihtout tag"
+            print("error : some shaders wihtout tag")
 
     def selSgWithTag_PB_hit(self):
         SG_list = self.getSgWithTag()
         pm.select(SG_list, r=True, noExpand=True)
+        print(SG_list)
 
     def getSgWithTag(self):
         tag_name = self.tagEditName2_LE.text()
@@ -459,10 +502,10 @@ class prmanR22_tools_archiveEdit_ui(QtWidgets.QWidget, prmanR22_tools_archiveEdi
         if 'global_matteID' in self.child_all_list:
             self.child_all_list.remove('global_matteID')
         num = len(self.child_all_list)
-        print '#####################################################################################################'
-        print 'total of ' + str(num) + ' node(s) will be deleted'
+        print('#####################################################################################################')
+        print('total of ' + str(num) + ' node(s) will be deleted')
         for node in self.child_all_list:
-            print str(node) + ' (' + str(node.type()) + ')'
+            print(str(node) + ' (' + str(node.type()) + ')')
 
         pm.undoInfo(ock=True)
         pm.delete(self.child_all_list)
@@ -497,6 +540,129 @@ class prmanR22_tools_archiveEdit_ui(QtWidgets.QWidget, prmanR22_tools_archiveEdi
 
     def importShader(self, mb_file, name_shader):
         cmds.file(mb_file, i=True, ignoreVersion=True, rpr=name_shader, options="v=0;p=17;f=0", pr=True, mergeNamespacesOnClash=False)
+
+    def delArnold_PB_hit(self):
+        rmanloaded = pm.pluginInfo("RenderMan_for_Maya.py", query=True, loaded=True)
+        if rmanloaded:
+            pm.setAttr("defaultRenderGlobals.currentRenderer", "renderman", type="string")
+        else:
+            pm.setAttr("defaultRenderGlobals.currentRenderer", "mayaSoftware", type="string")
+        arnold_loaded = pm.pluginInfo("mtoa.mll", query=True, loaded=True)
+        if arnold_loaded:
+            pm.pluginInfo("mtoa.mll", edit=True, remove=True)
+            pm.unloadPlugin('mtoa.mll', force=True)
+        arnold_node = [
+            "defaultArnoldRenderOptions",
+            "defaultArnoldFilter",
+            "defaultArnoldDriver",
+            "defaultArnoldDisplayDriver"
+        ]
+        for node in arnold_node:
+            if pm.objExists(node):
+                print("delete %s" % (node))
+                pm.delete(node)
+
+    def delRenderLayer_PB_hit(self):
+        pm.editRenderLayerGlobals(currentRenderLayer='defaultRenderLayer')
+        rl_list = pm.ls(type="renderLayer")
+        for rl in rl_list:
+            if rl.name() != 'defaultRenderLayer':
+                print("delete %s" % (rl.name()))
+                pm.delete(rl)
+
+
+    def delRenderSetUp_PB_hit(self):
+        renderSetUp_loaded = pm.pluginInfo("renderSetup.py", loaded=True, query=True)
+        if renderSetUp_loaded is False:
+            pm.loadPlugin("renderSetup.py")
+        import maya.app.renderSetup.views.renderSetup as renderSetup
+        renderSetup.propertyEditorClosed()
+        renderSetup.renderSetupWindowClosed()
+        coll_list = pm.ls(type="collection")
+        for coll in coll_list:
+            print("delete %s" % (coll))
+            pm.delete(coll)
+        rsl_list = pm.ls(type="renderSetupLayer")
+        for rsl in rsl_list:
+            print("delete %s" % (rsl))
+            pm.delete(rsl)
+        pm.pluginInfo("renderSetup.py", edit=True, remove=True)
+        pm.unloadPlugin('renderSetup.py', force=True)
+
+    def delAov_PB_hit(self):
+        rmanDisplayChannel_list = pm.ls(type="rmanDisplayChannel")
+        rmanDisplay_list = pm.ls(type="rmanDisplay")
+        pm.delete(rmanDisplayChannel_list)
+        pm.delete(rmanDisplay_list)
+
+    def getRlf(self):
+        rlf_list = []
+        select_list = pm.ls(sl=True)
+        gpu_node_list = []
+        for node in select_list:
+            node_s = node.getShape()
+            if node_s.type() == 'gpuCache':
+                gpu_node_list.append(node_s)
+        for gpu in gpu_node_list:
+            render = gpu.getAttr('rman__torattr___renderAlembicCache')
+            if render:
+                abc_file = gpu.getAttr('cacheFileName')
+                if abc_file[-4:] == ".abc":
+                    rlf_file = abc_file[:-4] + ".rlf"
+                    if os.path.isfile(rlf_file):
+                        if rlf_file not in rlf_list:
+                            rlf_list.append(rlf_file)
+                        exist_a = True
+                    else:
+                        exist_a = False
+                    rlf_file = gpu.getAttr('rman__torattr___rlfName')
+                    if os.path.isfile(rlf_file):
+                        if rlf_file not in rlf_list:
+                            rlf_list.append(rlf_file)
+                        exist_b = True
+                    else:
+                        exist_b = False
+                if (exist_a or exist_b) is False:
+                    print(gpu.name() + " Rlf not found")
+        return rlf_list
+
+    def getSgWithRlf_PB_hit(self):
+        rlf_list = self.getRlf()
+        material_list = []
+        for rlf in rlf_list:
+            file = open(rlf, "r")
+            json_dict = json.load(file)
+            file.close()
+            for i in json_dict['RuleSet']:
+                material = i['MaterialId']
+                if material not in material_list:
+                    material_list.append(material)
+        print(material_list)
+        pm.select(material_list, r=True, noExpand=True)
+
+    def setAniForAbc_PB_hit(self):
+        if pm.objExists('abcTimeConversion') is False:
+            node = pm.createNode('timeToUnitConversion', n='abcTimeConversion')
+        node = pm.PyNode('abcTimeConversion')
+        node.setAttr('conversionFactor', 0.005)
+        pm.connectAttr('time1.outTime', node.input, f=True)
+        gpu_list = pm.ls(type="gpuCache")
+        for gpu in gpu_list:
+            gpu.setAttr('rman__torattr___abcFPS', 30)
+            pm.connectAttr(node.output, gpu.rman__torattr___abcFrame, f=True)
+
+    def copyUvRigged_PB_hit(self):
+        sel_list = pm.ls(sl=True)
+        shape_list = pm.listRelatives(sel_list[1], shapes=True)
+        if len(shape_list) > 1:
+            orig_shape = shape_list[1]
+            orig_shape.setAttr('intermediateObject', 0)
+            newShape = sel_list[0].getShape()
+            pm.transferAttributes(newShape, orig_shape, transferPositions=0, transferNormals=0, transferUVs=2, transferColors=2, sampleSpace=4, searchMethod=3, flipUVs=0, colorBorders=1)
+            pm.delete(orig_shape, ch=1)
+            orig_shape.setAttr('intermediateObject', 1)
+        else:
+            pass
 
 
 class prmanR22_tools_renderSets_ui(QtWidgets.QWidget, prmanR22_tools_renderSets_ui.Ui_main_widget):
@@ -572,27 +738,41 @@ class prmanR22_tools_renderSets_ui(QtWidgets.QWidget, prmanR22_tools_renderSets_
                 mesh_list.append(obj)
         return mesh_list
 
+    def getSelPrmanNode(self):
+        prman_node_list = ['mesh', 'RenderManArchive', 'PxrLayerSurface', 'PxrSurface', 'PxrDisney', 'gpuCache']
+        node_list = []
+        obj_list = pm.ls(sl=True)
+        for obj in obj_list:
+            if obj.type() == "transform":
+                node_type = obj.getShape().type()
+            else:
+                node_type = obj.type()
+            print(node_type)
+            if node_type in prman_node_list:
+                node_list.append(obj)
+        return node_list
+
     def matteIdAttach_PB_hit(self):
         self.createMatteAttrNode()
         attr_name, matteIdColor, attr_node = self.checkMatteIdData()
-        mesh_list = self.getSelMeshList()
-        for mesh in mesh_list:
-            exists = pm.attributeQuery(attr_name, node=mesh, ex=True)
+        node_list = self.getSelPrmanNode()
+        for node in node_list:
+            exists = pm.attributeQuery(attr_name, node=node, ex=True)
             if exists is False:
-                pm.addAttr(mesh, longName=attr_name, usedAsColor=True, attributeType='float3', keyable=True)
-                pm.addAttr(mesh, longName=attr_name + 'R', defaultValue=1.0, attributeType='float', parent=attr_name, keyable=True)
-                pm.addAttr(mesh, longName=attr_name + 'G', defaultValue=1.0, attributeType='float', parent=attr_name, keyable=True)
-                pm.addAttr(mesh, longName=attr_name + 'B', defaultValue=1.0, attributeType='float', parent=attr_name, keyable=True)
-            pm.connectAttr(attr_node.defaultFloat3, mesh.name() + '.' + attr_name, f=True)
+                pm.addAttr(node, longName=attr_name, usedAsColor=True, attributeType='float3', keyable=True)
+                pm.addAttr(node, longName=attr_name + 'R', defaultValue=1.0, attributeType='float', parent=attr_name, keyable=True)
+                pm.addAttr(node, longName=attr_name + 'G', defaultValue=1.0, attributeType='float', parent=attr_name, keyable=True)
+                pm.addAttr(node, longName=attr_name + 'B', defaultValue=1.0, attributeType='float', parent=attr_name, keyable=True)
+            pm.connectAttr(attr_node.defaultFloat3, node.name() + '.' + attr_name, f=True)
 
     def matteIdDetach_PB_hit(self):
         self.createMatteAttrNode()
-        mesh_list = self.getSelMeshList()
+        node_list = self.getSelPrmanNode()
         attr_name, matteIdColor, attr_node = self.checkMatteIdData()
-        for mesh in mesh_list:
-            exists = pm.attributeQuery(attr_name, node=mesh, ex=True)
+        for node in node_list:
+            exists = pm.attributeQuery(attr_name, node=node, ex=True)
             if exists is True:
-                pm.deleteAttr(mesh, at=attr_name)
+                pm.deleteAttr(node, at=attr_name)
 
     def checkMatteIdData(self):
         matteID_num = self.matteIdNum_combobox.currentText()
@@ -614,21 +794,21 @@ class prmanR22_tools_renderSets_ui(QtWidgets.QWidget, prmanR22_tools_renderSets_
             matteID_g = 'MatteID' + str(num) + '_green_pxrAttr'
             matteID_b = 'MatteID' + str(num) + '_blue_pxrAttr'
             if pm.objExists(matteID_r):
-                print str(matteID_r) + ' already exists'
+                print(str(matteID_r) + ' already exists')
             else:
                 node_r = pm.shadingNode('PxrAttribute', at=True, n=matteID_r)
             node_r = pm.PyNode(matteID_r)
             node_r.setAttr('defaultFloat3', (1, 0, 0))
 
             if pm.objExists(matteID_g):
-                print str(matteID_g) + ' already exists'
+                print(str(matteID_g) + ' already exists')
             else:
                 node_g = pm.shadingNode('PxrAttribute', at=True, n=matteID_g)
             node_g = pm.PyNode(matteID_g)
             node_g.setAttr('defaultFloat3', (0, 1, 0))
 
             if pm.objExists(matteID_b):
-                print str(matteID_b) + ' already exists'
+                print(str(matteID_b) + ' already exists')
             else:
                 node_b = pm.shadingNode('PxrAttribute', at=True, n=matteID_b)
             node_b = pm.PyNode(matteID_b)
@@ -645,7 +825,7 @@ class prmanR22_tools_renderSets_ui(QtWidgets.QWidget, prmanR22_tools_renderSets_
 
     def matteIdPxrMatteId_PB_hit(self):
         if pm.objExists('global_matteID'):
-            print 'global_matteID already exists '
+            print('global_matteID already exists ')
         else:
             pm.shadingNode('PxrMatteID', at=True, n='global_matteID')
         PxrSurface_shaders = pm.ls(type='PxrSurface')
@@ -786,7 +966,7 @@ class prmanR22_tools_renderSets_ui(QtWidgets.QWidget, prmanR22_tools_renderSets_
             rlid = rl.getAttr('rlid')
             if rlid != 0:
                 if pm.objExists('rlid_' + str(rlid) + '_vis_off_pxrAttr'):
-                    print 'rlid ' + str(rlid) + ' vis_off_pxrAttr already exists'
+                    print('rlid ' + str(rlid) + ' vis_off_pxrAttr already exists')
                 else:
                     node = pm.shadingNode('PxrAttribute', at=True, n='rlid_' + str(rlid) + '_vis_off_pxrAttr')
                     node.setAttr('defaultInt', 0)
@@ -870,11 +1050,12 @@ class prmanR22_tools_renderSetUp_ui(QtWidgets.QWidget, prmanR22_tools_renderSetU
 
     def addMatteIdAttr_PB_hit(self):
         sel_list = pm.ls(selection=True)
+        type_list = ['mesh', 'HairShape', 'gpuCache', 'RenderManArchive','pgYetiMaya']
         mesh_list = []
         for obj in sel_list:
             obj_type = obj.getShape().type()
-            print obj_type
-            if obj_type == 'mesh' or obj_type == 'HairShape' or obj_type == 'gpuCache':
+            print(obj_type)
+            if obj_type in type_list:
                 mesh_list.append(obj)
         for mesh in mesh_list:
             mesh_t = mesh.getTransform()
@@ -897,7 +1078,7 @@ class prmanR22_tools_renderSetUp_ui(QtWidgets.QWidget, prmanR22_tools_renderSetU
 
     def pxrMatteIdSet_PB_hit(self):
         if pm.objExists('global_matteID'):
-            print 'global_matteID already exists'
+            print('global_matteID already exists')
         else:
             pm.shadingNode('PxrMatteID', at=True, n='global_matteID')
         PxrSurface_shaders = pm.ls(type='PxrSurface')
@@ -983,27 +1164,37 @@ class prmanR22_tools_renderSetUp_ui(QtWidgets.QWidget, prmanR22_tools_renderSetU
         self.createAovDisplay(display_name, display_channel_name, channel_source, lightGrpName)
 
 
-class prmanR22_tools_objReplacement_ui(QtWidgets.QWidget, prmanR22_tools_objReplacement_ui.Ui_main_widget):
+class prmanR22_tools_objEdit_ui(QtWidgets.QWidget, prmanR22_tools_objEdit_ui.Ui_main_widget):
     def __init__(self, parent=None):
-        super(prmanR22_tools_objReplacement_ui, self).__init__(parent)
+        super(prmanR22_tools_objEdit_ui, self).__init__(parent)
         self.setupUi(self)
+        # regx = QtCore.QRegExp("^-?([0-9])+$")
+        regx = QtCore.QRegExp("^-?\\d{1,}(\\.[0-9]+)?")
+        
+        self.onlyInt = QtGui.QRegExpValidator(regx)
+        setInt_list = [self.translateMin_LE, self.translateMax_LE,
+            self.rotateMin_LE,self.rotateMax_LE,
+            self.scaleMin_LE,self.scaleMax_LE,
+            ]
+        for node in setInt_list:
+            node.setValidator(self.onlyInt)
         self.connectInterface()
 
     def connectInterface(self):
         self.targetGetObj_PB.clicked.connect(self.targetGetObj_PB_hit)
         self.replaceGetObj_PB.clicked.connect(self.replaceGetObj_PB_hit)
         self.duplicate_PB.clicked.connect(self.duplicate_PB_hit)
-        self.vdbFileSet_PB.clicked.connect(self.vdbFileSet_PB_hit)
-        self.vdbBro_PB.clicked.connect(self.vdbBro_PB_hit)
-        self.vdbOpen_PB.clicked.connect(self.vdbOpen_PB_hit)
-        self.getSg_PB.clicked.connect(self.getSg_PB_hit)
-        self.vdbSgSet_PB.clicked.connect(self.vdbSgSet_PB_hit)
-        self.targetVdb_PB.clicked.connect(self.targetVdb_PB_hit)
+        self.setTranslate_PB.clicked.connect(self.setTranslate_PB_hit)
+        self.setRotate_PB.clicked.connect(self.setRotate_PB_hit)
+        self.setScale_PB.clicked.connect(self.setScale_PB_hit)
+        self.setAllRandom_PB.clicked.connect(self.setAllRandom_PB_hit)
+        self.scaleFreeze_CB.stateChanged.connect(self.scaleFreeze_CB_changed)
+
 
     def targetGetObj_PB_hit(self):
         node_list = pm.ls(sl=True)
         mesh_list = []
-        type_list = ['mesh', 'gpuCache', 'OpenVDBVisualize']
+        type_list = ['mesh', 'gpuCache', 'OpenVDBVisualize', 'follicle']
         for node in node_list:
             node_type = node.getShape().type()
             if node_type in type_list:
@@ -1017,7 +1208,7 @@ class prmanR22_tools_objReplacement_ui(QtWidgets.QWidget, prmanR22_tools_objRepl
     def replaceGetObj_PB_hit(self):
         node_list = pm.ls(sl=True, tl=True)
         mesh_list = []
-        type_list = ['mesh', 'gpuCache', 'OpenVDBVisualize']
+        type_list = ['mesh', 'gpuCache', 'OpenVDBVisualize', 'RenderManArchive']
         for node in node_list:
             node_type = node.getShape().type()
             if node_type in type_list:
@@ -1036,7 +1227,9 @@ class prmanR22_tools_objReplacement_ui(QtWidgets.QWidget, prmanR22_tools_objRepl
         for node in node_list:
             node = pm.PyNode(node)
             pm.select(node)
-            piv = cmds.xform(piv=True, q=True, ws=True)[:3]
+            piv_world = cmds.xform(piv=True, q=True, ws=True)[:3]
+            piv_local = cmds.xform(piv=True, q=True)[:3]
+            print(piv_local)
             scale = node.getAttr('scale')
             rotation = node.getAttr('rotate')
             translate = node.getAttr('translate')
@@ -1046,9 +1239,113 @@ class prmanR22_tools_objReplacement_ui(QtWidgets.QWidget, prmanR22_tools_objRepl
                 newNode = pm.duplicate(replaceObj_node, rr=True, un=True)[0]
             elif self.dupInputConnections_RB.isChecked():
                 newNode = pm.duplicate(replaceObj_node, rr=True, ic=True)[0]
-            newNode.setAttr('translate', piv)
+            pm.select(newNode)
+            # cmds.xform(rotatePivot=piv_local)
+            # cmds.xform(scalePivot=piv_local)
             newNode.setAttr('scale', scale)
             newNode.setAttr('rotate', rotation)
+            newNode.setAttr('translate', translate)
+
+    def setTranslate_PB_hit(self):
+        pm.undoInfo(ock=True)
+        volue_min = float(self.translateMin_LE.text())
+        volue_max = float(self.translateMax_LE.text())
+        list_text = self.targetGetObj_LE.text()
+        node_list = list_text.split(',')
+        for node in node_list:
+            if self.TX_CB.isChecked():
+                self.setRandom(node,'translateX',volue_min, volue_max)
+            if self.TY_CB.isChecked():
+                self.setRandom(node,'translateY',volue_min, volue_max)
+            if self.TZ_CB.isChecked():
+                self.setRandom(node,'translateZ',volue_min, volue_max)
+        pm.undoInfo(cck=True)
+
+    def setRotate_PB_hit(self):
+        pm.undoInfo(ock=True)
+        volue_min = float(self.rotateMin_LE.text())
+        volue_max = float(self.rotateMax_LE.text())
+        list_text = self.targetGetObj_LE.text()
+        node_list = list_text.split(',')
+        for node in node_list:
+            if self.RX_CB.isChecked():
+                self.setRandom(node,'rotateX',volue_min, volue_max)
+            if self.RY_CB.isChecked():
+                self.setRandom(node,'rotateY',volue_min, volue_max)
+            if self.RZ_CB.isChecked():
+                self.setRandom(node,'rotateZ',volue_min, volue_max)
+        pm.undoInfo(cck=True)
+
+    def setScale_PB_hit(self):
+        pm.undoInfo(ock=True)
+        volue_min = float(self.scaleMin_LE.text())
+        volue_max = float(self.scaleMax_LE.text())
+        list_text = self.targetGetObj_LE.text()
+        node_list = list_text.split(',')
+        for node in node_list:
+            if self.scaleFreeze_CB.isChecked():
+                random_volue = rand.uniform(volue_min,volue_max)
+                node = pm.PyNode(node)
+                node.setAttr('scale', (random_volue, random_volue, random_volue))
+            else:
+                if self.SX_CB.isChecked():
+                    self.setRandom(node,'scaleX',volue_min, volue_max)
+                if self.SY_CB.isChecked():
+                    self.setRandom(node,'scaleY',volue_min, volue_max)
+                if self.SZ_CB.isChecked():
+                    self.setRandom(node,'scaleZ',volue_min, volue_max)        
+        pm.undoInfo(cck=True)
+
+
+    def setRandom(self,node, attr, volue_min, volue_max):
+        volue = rand.uniform(volue_min,volue_max)
+        node = pm.PyNode(node)
+        node.setAttr(attr, volue)
+    
+    def setAllRandom_PB_hit(self):
+        pm.undoInfo(ock=True)
+        self.setTranslate_PB_hit()
+        self.setRotate_PB_hit()
+        self.setScale_PB_hit()
+        pm.undoInfo(cck=True)
+
+
+    def scaleFreeze_CB_changed(self):
+        if self.scaleFreeze_CB.isChecked():
+            self.SX_CB.setEnabled(False)
+            self.SY_CB.setEnabled(False)
+            self.SZ_CB.setEnabled(False)
+            self.SX_CB.setChecked(True)
+            self.SY_CB.setChecked(True)
+            self.SZ_CB.setChecked(True)
+        else:
+            self.SX_CB.setEnabled(True)
+            self.SY_CB.setEnabled(True)
+            self.SZ_CB.setEnabled(True)
+
+
+
+class prmanR22_tools_vdbEdit_ui(QtWidgets.QWidget, prmanR22_tools_vdbEdit_ui.Ui_main_widget):
+    def __init__(self, parent=None):
+        super(prmanR22_tools_vdbEdit_ui, self).__init__(parent)
+        self.setupUi(self)
+        self.connectInterface()
+
+    def connectInterface(self):
+        self.vdbFileSet_PB.clicked.connect(self.vdbFileSet_PB_hit)
+        self.vdbBro_PB.clicked.connect(self.vdbBro_PB_hit)
+        self.vdbOpen_PB.clicked.connect(self.vdbOpen_PB_hit)
+        self.getSg_PB.clicked.connect(self.getSg_PB_hit)
+        self.vdbSgSet_PB.clicked.connect(self.vdbSgSet_PB_hit)
+        self.targetVdb_PB.clicked.connect(self.targetVdb_PB_hit)
+        self.vdbSetView_PB.clicked.connect(self.vdbSetView_PB_hit)
+        self.setAllBox_PB.clicked.connect(self.setAllBox_PB_hit)
+        self.fixReadNode_PB.clicked.connect(self.fixReadNode_PB_hit)
+        self.delGva_PB.clicked.connect(self.delGva_PB_hit)
+        self.newGva_PB.clicked.connect(self.newGva_PB_hit)
+        self.timeOff_PB.clicked.connect(self.timeOff_PB_hit)
+        self.vdbName_PB.clicked.connect(self.vdbName_PB_hit)
+
 
     def targetVdb_PB_hit(self):
         ls_list = pm.ls(sl=True)
@@ -1081,25 +1378,156 @@ class prmanR22_tools_objReplacement_ui(QtWidgets.QWidget, prmanR22_tools_objRepl
         for vdb in vdb_list:
             vdb = pm.PyNode(vdb)
             vdb_s = vdb.getShape()
-            read_node = pm.listConnections(vdb_s, t='OpenVDBRead', s=True)[0]
+            read_node = pm.createNode('OpenVDBRead')
             read_node.setAttr('VdbFilePath', vdbfile)
+            pm.connectAttr(read_node.VdbOutput, vdb_s.VDBInput, f=True)
+
 
     def getSg_PB_hit(self):
+        '''
         node = pm.ls(sl=True, tl=True)[0]
-        print node.type()
+        print(node.type())
         if node.type() == 'shadingEngine':
             self.vdbSg_LE.setText(node.name())
+
+        
+        
+        '''
+
+
+        node_list = pm.ls(sl=True)
+        sg_list = []
+        for node in node_list:
+            if node.type() == 'shadingEngine':
+                sg_list.append(node)
+        name_list = []
+        for sb in sg_list:
+            name_list.append(sb.name())
+        node_text = ', '.join(name_list)
+        self.vdbSg_LE.setText(node_text)
+
+
+
 
     def vdbSgSet_PB_hit(self):
         list_text = self.targetVdb_LE.text()
         vdb_list = list_text.split(',')
-        sg = self.vdbSg_LE.text()
-        sg_node = pm.PyNode(sg)
+        sg_text = self.vdbSg_LE.text()
+        sg_list = sg_text.split(',')
         for vdb in vdb_list:
             vdb = pm.PyNode(vdb)
             vdb_s = vdb.getShape()
+            sg_text = rand.choice(sg_list)
+            sg_node = pm.PyNode(sg_text)
             pm.connectAttr(sg_node.message, vdb_s.rman__torattr___customShadingGroup, f=True)
 
+    def vdbSetView_PB_hit(self):
+        renderAs_dict = {
+            'Auto':0,
+            'Level Sets' : 1,
+            'Fog Volume':2
+        }
+        text = self.renderAs_comboBox.currentText()
+        renderAs_index = renderAs_dict[text]
+        print(renderAs_index)
+        sel_nodes=pm.ls(selection=True)
+        for node in sel_nodes:
+            node_s = node.getShape()
+            if node_s.nodeType() == 'OpenVDBVisualize':
+                node_s.setAttr('LeafNodes', self.leafNode_CB.isChecked())
+                node_s.setAttr('Surface', self.surface_CB.isChecked())
+                node_s.setAttr('ActiveVoxels', self.activeVoxels_CB.isChecked())
+                node_s.setAttr('renderAs', renderAs_index)
+
+    def setAllBox_PB_hit(self):
+        vdb_list = pm.ls(type= 'OpenVDBVisualize')
+        for vdb in vdb_list:
+            vdb.setAttr('LeafNodes', 0)
+            vdb.setAttr('Surface', 0)
+            vdb.setAttr('ActiveVoxels', 0)
+
+    def fixReadNode_PB_hit(self):
+        read_node_list = pm.ls(type='OpenVDBRead')
+        path_dict = {}
+        for node in read_node_list:
+            path = node.getAttr('VdbFilePath')
+            vdb_list = pm.listConnections(node.VdbOutput, d=True)
+            if path not in path_dict:
+                path_dict[path]=vdb_list
+            else:
+                path_dict[path].extend(vdb_list)
+            clean_up_list=list(set(path_dict[path]))
+            path_dict[path] = clean_up_list
+        for key in path_dict:
+            read_node = pm.createNode('OpenVDBRead')
+            read_node.setAttr('VdbFilePath', key)
+            for vdb in path_dict[key]:
+                pm.connectAttr(read_node.VdbOutput, vdb.VDBInput, f=True)
+        for read_node in pm.ls(type='OpenVDBRead'):
+            num = len(pm.listConnections(read_node.VdbOutput, d=True))
+            if num == 0:
+                pm.delete(read_node)
+                print(f'{read_node.name()} has been removed') 
+    
+
+    def delGva_PB_hit(self):
+        gva_list = pm.ls(type='rmanVolumeAggregateSet')
+        for gva in gva_list:
+            pm.lockNode(gva, lock=False )
+            pm.delete(gva)
+        rmanPPT = pm.PyNode('PxrPathTracer')
+        rmanPPT.setAttr('volumeAggregate', '')
+
+    def newGva_PB_hit(self):
+        gva_node = pm.createNode('rmanVolumeAggregateSet')
+        vdb_list = pm.ls(type= 'OpenVDBVisualize')
+        for vdb_node in vdb_list:
+            pm.connectAttr(vdb_node.instObjGroups,gva_node.dagSetMembers, na=True, f=True)
+        rmanPPT = pm.PyNode('PxrPathTracer')
+        rmanPPT.setAttr('volumeAggregate', gva_node.nodeName())
+
+
+    def timeOff_PB_hit(self):
+        time_node = pm.PyNode('time1')
+        vdb_read_list = pm.ls(type='OpenVDBRead')
+        for vdb_read in vdb_read_list:
+            try:
+                pm.disconnectAttr(time_node.outTime, vdb_read.time)
+            except:
+                print(f'{vdb_read.nodeName()} is invalid')
+    
+
+    def vdbName_PB_hit(self):
+        vdb_list = pm.ls(type='OpenVDBVisualize', long=True)
+        vdb_data_dict = {}
+        for vdb in vdb_list:
+            vdb_t = vdb.getTransform()
+            orig_name = self.withoutNum(vdb_t.nodeName())
+            if orig_name not in vdb_data_dict:
+                vdb_data_dict[orig_name]=[vdb_t]
+            else:
+                vdb_data_dict[orig_name].append(vdb_t)
+        
+        for key in vdb_data_dict:
+            for num, vdb in enumerate(vdb_data_dict[key]):
+                four_num = "%04d" % (num+1)
+                new_name = key + four_num
+                vdb.rename(new_name)
+
+
+    def withoutNum(self, name):
+        while self.is_number(name[-1:len(name)]):
+            numMax = len(name)
+            name = name[0:numMax-1]
+        return name
+
+    def is_number(self, s):
+        try:
+            int(s)
+            return True
+        except ValueError:
+            pass
+        return False
 
 # ------------------------------------------------------------------------------------
 

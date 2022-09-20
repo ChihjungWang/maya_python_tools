@@ -10,23 +10,29 @@ import inspect
 import csv
 import time
 import sys
+import importlib
+
 maya_version = cmds.about(version=True)
 username = getpass.getuser()
 ui_path = 'C:/Users/' + username + '/Documents/maya/' + maya_version + '/scripts/ui'
 sys.path.append(ui_path)
-sys.path.append("//mcd-one/database/assets/scripts/maya_scripts/ui")
+if maya_version == '2023':
+    sys.path.append("//mcd-one/database/assets/scripts/maya_scripts_py3/ui")
+else:
+    sys.path.append("//mcd-one/database/assets/scripts/maya_scripts/ui")
+
 import prmanToolsLighting_ui
-reload(prmanToolsLighting_ui)
+importlib.reload(prmanToolsLighting_ui)
 import prmanToolsShaderRename_ui
-reload(prmanToolsShaderRename_ui)
+importlib.reload(prmanToolsShaderRename_ui)
 import prmanToolsRibEdit_ui
-reload(prmanToolsRibEdit_ui)
+importlib.reload(prmanToolsRibEdit_ui)
 import prmanToolsTexureEdit_ui
-reload(prmanToolsTexureEdit_ui)
+importlib.reload(prmanToolsTexureEdit_ui)
 import prmanToolsDelUnuse_ui
-reload(prmanToolsDelUnuse_ui)
+importlib.reload(prmanToolsDelUnuse_ui)
 import prmanToolsDelUnknow_ui
-reload(prmanToolsDelUnknow_ui)
+importlib.reload(prmanToolsDelUnknow_ui)
 
 dialog = None
 
@@ -121,7 +127,7 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
 
     def pxrMatteID_toShaders_PB_hit(self):
         if pm.objExists('global_matteID'):
-            print 'global_matteID already exists '
+            print('global_matteID already exists ')
         else:
             pm.shadingNode('PxrMatteID', at=True, n='global_matteID')
         PxrSurface_shaders = pm.ls(type='PxrSurface')
@@ -223,7 +229,7 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
             pm.editRenderLayerAdjustment('renderManRISGlobals.rman__torattr___denoise')
             pm.setAttr("renderManRISGlobals.rman__torattr___denoise", 1)
             for light in self.light_in_RL_list:
-                node_lightGrp = pm.getAttr(light+'.lightGroup')
+                node_lightGrp = pm.getAttr(light + '.lightGroup')
                 if node_lightGrp != '':
                     self.createOutputDirectDiffuse(node_lightGrp)
                     self.createOutputIndirectDiffuse(node_lightGrp)
@@ -261,7 +267,7 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
             pm.setAttr(name_output + ".rman__torattr___computeBehavior", 0)
             node_list = pm.listHistory("rmanFinalGlobals", pdo=True, lf=False, il=2)
             channel_node = node_list[-1].name()
-            print channel_node
+            print(channel_node)
             source_value = '"' + "color lpe:C<RD>[<L.'" + name + "'>O]" + '"'
             cmds = 'rmanAddAttr ' + '"' + channel_node + '" ' + '"rman__riopt__DisplayChannel_source" ' + source_value
             pm.mel.eval(cmds)
@@ -277,7 +283,7 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
             pm.setAttr(name_output+".rman__torattr___computeBehavior", 0)
             node_list = pm.listHistory("rmanFinalGlobals", pdo=True, lf=False, il=2)
             channel_node = node_list[-1].name()
-            print channel_node
+            print(channel_node)
             source_value = '"'+"color lpe:C<RD>[DS]+[<L.'"+name+"'>O]"+'"'
             cmds = 'rmanAddAttr '+'"'+channel_node+'" '+'"rman__riopt__DisplayChannel_source" '+source_value
             pm.mel.eval(cmds)
@@ -293,7 +299,7 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
             pm.setAttr(name_output+".rman__torattr___computeBehavior", 0)
             node_list = pm.listHistory("rmanFinalGlobals", pdo=True, lf=False, il=2)
             channel_node = node_list[-1].name()
-            print channel_node
+            print(channel_node)
             source_value = '"'+"color lpe:C<RS>[<L.'"+name+"'>O]"+'"'
             cmds = 'rmanAddAttr '+'"'+channel_node+'" '+'"rman__riopt__DisplayChannel_source" '+source_value
             pm.mel.eval(cmds)
@@ -309,7 +315,7 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
             pm.setAttr(name_output+".rman__torattr___computeBehavior", 0)
             node_list = pm.listHistory("rmanFinalGlobals", pdo=True, lf=False, il=2)
             channel_node = node_list[-1].name()
-            print channel_node
+            print(channel_node)
             source_value = '"'+"color lpe:C<RS>[DS]+[<L.'"+name+"'>O]"+'"'
             cmds = 'rmanAddAttr '+'"'+channel_node+'" '+'"rman__riopt__DisplayChannel_source" '+source_value
             pm.mel.eval(cmds)
@@ -325,7 +331,7 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
             pm.setAttr(name_output+".rman__torattr___computeBehavior", 0)
             node_list = pm.listHistory("rmanFinalGlobals", pdo=True, lf=False, il=2)
             channel_node = node_list[-1].name()
-            print channel_node
+            print(channel_node)
             source_value = '"'+"color lpe:C<TD>[DS]*[<L.'"+name+"'>O]"+'"'
             cmds = 'rmanAddAttr '+'"'+channel_node+'" '+'"rman__riopt__DisplayChannel_source" '+source_value
             pm.mel.eval(cmds)
@@ -341,7 +347,7 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
             pm.setAttr(name_output+".rman__torattr___computeBehavior", 0)
             node_list = pm.listHistory("rmanFinalGlobals", pdo=True, lf=False, il=2)
             channel_node = node_list[-1].name()
-            print channel_node
+            print(channel_node)
             source_value = '"'+"color lpe:C<TS>[DS]*[<L.'"+name+"'>O]"+'"'
             cmds = 'rmanAddAttr '+'"'+channel_node+'" '+'"rman__riopt__DisplayChannel_source" '+source_value
             pm.mel.eval(cmds)
@@ -366,7 +372,7 @@ class prmanToolsLighting_ui(QtWidgets.QWidget, prmanToolsLighting_ui.Ui_main_wid
             pm.setAttr(name_output+".rman__torattr___computeBehavior", 0)
             node_list = pm.listHistory("rmanFinalGlobals", pdo=True, lf=False, il=2)
             channel_node = node_list[-1].name()
-            print channel_node
+            print(channel_node)
             source_value = '"'+"color lpe:C\[DS\]*\[<L.'"+name+"'>O\]"+'"'
             cmds = 'rmanAddAttr '+'"'+channel_node+'" '+'"rman__riopt__DisplayChannel_source" '+source_value
             pm.mel.eval(cmds)
@@ -698,6 +704,8 @@ class prmanToolsRibEdit_ui(QtWidgets.QWidget, prmanToolsRibEdit_ui.Ui_main_widge
         self.substituteGpuCache_PB.clicked.connect(self.substituteGpuCache_PB_hit)
         self.ribShapeRename_PB.clicked.connect(self.ribShapeRename_PB_hit)
         self.ribFrameFix_PB.clicked.connect(self.ribFrameFix_PB_hit)
+        self.substituteRlf_PB.clicked.connect(self.substituteRlf_PB_hit)
+        self.rlfRefill_PB.clicked.connect(self.rlfRefill_PB_hit)
 
     def writeCsv(self):
         if os.path.exists(self.python_temp) is False:
@@ -758,6 +766,15 @@ class prmanToolsRibEdit_ui(QtWidgets.QWidget, prmanToolsRibEdit_ui.Ui_main_widge
             new_path = self.go_replace(path)
             pm.setAttr(i+'.filename', new_path, type="string")
 
+    def substituteRlf_PB_hit(self):
+        gpu_list = pm.ls(type='gpuCache', dag=True)
+        for gpu in gpu_list:
+            print(gpu)
+            rlf_path = gpu.getAttr('rman__torattr___rlfName')
+            new_path = self.go_replace(rlf_path)
+            gpu.setAttr('rman__torattr___rlfName', new_path)
+
+
     def substituteGpuCache_PB_hit(self):
         rib_list = pm.ls(type='gpuCache', dag=True)
         for i in rib_list:
@@ -767,20 +784,20 @@ class prmanToolsRibEdit_ui(QtWidgets.QWidget, prmanToolsRibEdit_ui.Ui_main_widge
 
     def go_replace(self, path):
         path = path.replace('\\', '/')
-        print 'path '+path
+        # print('path '+path)
         old_path = self.oldRoot_LE.text()
         old_path = old_path.replace('\\', '/')
-        print 'old_path '+old_path
+        # print('old_path '+old_path)
         new_path = self.newRoot_LE.text()
         new_path = new_path.replace('\\', '/')
-        print 'new_path '+new_path
+        # print('new_path '+new_path)
         pathChanged = path.replace(old_path, new_path)
-        print 'replaced '+pathChanged
+        print('replaced '+pathChanged)
         return pathChanged
 
     def ribFrameFix_PB_hit(self):
         if pm.objExists('global_timeUC'):
-            print 'global_UC already exists'
+            print('global_UC already exists')
         else:
             pm.shadingNode('timeToUnitConversion', au=True, n='global_timeUC')
             pm.setAttr("global_timeUC.conversionFactor", 0.004)
@@ -831,6 +848,64 @@ class prmanToolsRibEdit_ui(QtWidgets.QWidget, prmanToolsRibEdit_ui.Ui_main_widge
                     new_name = i['name']+four_num
                     cmds.rename(node, new_name)
 
+    def rlfRefill_PB_hit(self):
+        gpu_list = pm.ls(type='gpuCache')
+        for gpu in gpu_list:
+            gpu_file = gpu.getAttr('cacheFileName')
+            rlf = gpu_file.replace('abc', 'rlf')
+            if os.path.exists(rlf):
+                gpu.setAttr('rman__torattr___rlfName', rlf)
+
+        self.gpuCheck()
+        self.emptyRlfGpu()
+
+
+
+    def gpuCheck(self):
+        gpu_list = pm.ls(type='gpuCache')
+        gpu_data_dict = {}
+        for gpu in gpu_list:
+            gpu_name = gpu.nodeName()
+            if gpu_name[-5:len(gpu_name)] == 'Shape':
+                gpu_name_orig = gpu_name[0:-5]
+            gpu_name_orig = self.withoutNum(gpu_name_orig)
+            if gpu_name_orig not in gpu_data_dict.keys():
+                gpu_data_dict[gpu_name_orig]={
+                    'nodes':[gpu],
+                    'path':[]
+                }
+            else:
+                gpu_data_dict[gpu_name_orig]['nodes'].append(gpu)
+            rlf_name = gpu.getAttr('rman__torattr___rlfName')
+            if rlf_name != '':
+                if rlf_name not in gpu_data_dict[gpu_name_orig]['path']:
+                    gpu_data_dict[gpu_name_orig]['path'].append(rlf_name)
+        for rlf in gpu_data_dict:
+            node_list = gpu_data_dict[rlf]['nodes']
+            node_name_list = []
+            for node in node_list:
+                node_name_list.append(node.nodeName())
+            path = gpu_data_dict[rlf]['path']
+            print(f'----------------------------------------------------------------------------------------------')
+            print(f'name:{rlf}')
+            print(f'nodes:{node_name_list}')
+            print(f'path:{path}')
+
+
+    def emptyRlfGpu(self):
+        gpu_list = pm.ls(type='gpuCache')
+        empty_rlf_nodes = []
+        for gpu in gpu_list:
+            rlf = gpu.getAttr('rman__torattr___rlfName')
+            if rlf == '':
+                empty_rlf_nodes.append(gpu)
+        print()
+        print()
+        print()
+        print(f'epmty----------------------------------------------------------------------------------------------')
+        for empty in empty_rlf_nodes:
+            print(empty)
+
     def getTransforms(self, node):
         if cmds.nodeType(node) != 'transform':
             transforms = cmds.listRelatives(node, f=True, parent=True)[0]
@@ -865,7 +940,9 @@ class prmanToolsTexureEdit_ui(QtWidgets.QWidget, prmanToolsTexureEdit_ui.Ui_main
         self.file_type_list = {
             'file': 'fileTextureName',
             'PxrTexture': 'filename',
-            'PxrNormalMap': 'filename'
+            'PxrNormalMap': 'filename',
+            'PxrBump': 'filename',
+            'RedshiftNormalMap': 'tex0'
         }
         self.connectInterface()
 
@@ -1077,7 +1154,7 @@ class prmanToolsTexureEdit_ui(QtWidgets.QWidget, prmanToolsTexureEdit_ui.Ui_main
         for node in self.checked_node:
             path = self.getFileName(node)
             pathChanged = self.replace(path)
-            print pathChanged
+            print(pathChanged)
             self.setFileName(node, pathChanged)
         # pm.undoInfo(cck=True)
         time.sleep(1)
@@ -1359,12 +1436,12 @@ class prmanToolsDelUnknow_ui(QtWidgets.QWidget, prmanToolsDelUnknow_ui.Ui_main_w
                 for node in self.deleteNodeList:
                     pm.lockNode(node, lock=False)
                     pm.delete(node)
-                    print 'deleting: ' + node
+                    print('deleting: ' + node)
         elif self.delete_node == "unknowPlugins":
             if len(self.deleteNodeList) > 0:
                 for plugin in self.deleteNodeList:
                     pm.unknownPlugin(plugin, remove=True)
-                    print 'deleting: ' + plugin
+                    print('deleting: ' + plugin)
         pm.undoInfo(cck=True)
 
     def clearLayout(self, layout):

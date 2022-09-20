@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:/Users/chihjung/Documents/maya/2020/scripts/ui/prmanR22_tools_renderSets.ui',
-# licensing of 'C:/Users/chihjung/Documents/maya/2020/scripts/ui/prmanR22_tools_renderSets.ui' applies.
+# Form implementation generated from reading ui file 'C:/Users/chihjung/Documents/maya/2023/scripts/ui/prmanR22_tools_renderSets.ui',
+# licensing of 'C:/Users/chihjung/Documents/maya/2023/scripts/ui/prmanR22_tools_renderSets.ui' applies.
 #
-# Created: Fri May 29 15:51:51 2020
+# Created: Thu Sep  8 12:14:43 2022
 #      by: pyside2-uic  running on PySide2 5.12.5
 #
 # WARNING! All changes made in this file will be lost!
